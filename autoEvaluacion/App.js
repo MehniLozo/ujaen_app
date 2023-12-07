@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import SingInScreen from './Components/SingInScreen';
 import HomeScreen from './Components/HomeScreen';
 import RestartScreen from './Components/RestartScreen';
+import TestScreen from './Components/TestScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
@@ -25,7 +26,13 @@ export default function App() {
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Restart" component={RestartScreen} />
+    <Stack.Screen  options={{ title: 'Evaluacion',headerLeft: null, headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="Test" component={TestScreen} />
   </Stack.Navigator>
+  
 </NavigationContainer>
   );
 }

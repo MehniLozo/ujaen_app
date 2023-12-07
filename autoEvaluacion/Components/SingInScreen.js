@@ -40,6 +40,7 @@ const SingInScreen = () => {
         }
         else{
           console.log("si puede iniciar sesion")
+          navigation.navigate('Test');
         }
     console.log('Email:', email);
     console.log('Password:', password);
