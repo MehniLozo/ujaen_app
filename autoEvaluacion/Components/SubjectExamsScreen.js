@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ImageBackground } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
+const backgroundImage = require('../images/tec.jpeg');
+
 const SubjectExamsScreen = () => {
   // Dummy data for passed exams
   const passedExamsData = [
@@ -10,10 +12,13 @@ const SubjectExamsScreen = () => {
     { id: '3', nombre:"Nombre Examen",score: 75, type: 'Abierta', date: '2023-03-05' },
   ];
 
+  const [selectedFilter, setSelectedFilter] = useState(null);
+  const filterOptions = ['Opcion multiple', 'Verdadero o falso', 'Abierta'];
+
 return (
     <View style={styles.passedExamsSection}>
       <ImageBackground 
-        source = {{uri: '../images/tec.jpeg'}}
+        source = {backgroundImage}
         style = {styles.headerImage}
       >
         <TouchableOpacity>
@@ -22,11 +27,21 @@ return (
       <Text style={styles.headerText}>Te encuentras entre el top X de estudiantes autoevluados en esta asignatura</Text>
       </ImageBackground>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterList}>
-        <TouchableOpacity style={styles.filterItem}>
-          <Text>Opcion multiple</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      <View style={styles.filterList}>
+        {filterOptions.map((filter,index) => (
+          <TouchableOpacity 
+            key = {index}
+            style={[
+              styles.filterItem,
+              selectedFilter === filter && 
+              styles.selectedFilterItem
+            ]}
+            onPress={() => setSelectedFilter(filter)}
+            >
+            <Text>{filter}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <View style={styles.separator} />
 
@@ -80,6 +95,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 20,
+  },
+  selectedFilterItem:{
+    backgroundColor: '#8BC34A',
   },
   separator: {
     height: 1,
