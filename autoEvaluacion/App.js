@@ -6,10 +6,11 @@ import RestartScreen from './Components/RestartScreen';
 import TestScreen from './Components/TestScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import InitialScreen from './Components/InitialScreen';
 const Stack = createStackNavigator();
 export default function App() {
   return (
-    <NavigationContainer style={styles.container}>
+    /*<NavigationContainer style={styles.container}>
     <StatusBar backgroundColor = '#006D38' />
   <Stack.Navigator initialRouteName="Home">
     <Stack.Screen style={styles.container} options={{ title: '', headerStyle: {
@@ -34,6 +35,8 @@ export default function App() {
   </Stack.Navigator>
   
 </NavigationContainer>
+*/
+    <InitialScreen/>
   );
 }
 
