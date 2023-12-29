@@ -19,7 +19,7 @@ const EvaluationConfigScreen = () => {
         value={evaluationName}
         onChangeText={(text) => setEvaluationName(text)}
       />
-
+    <Text>Tipo de preguntas</Text>
       <Picker
         selectedValue={questionType}
         onValueChange={(itemValue) => setQuestionType(itemValue)}
