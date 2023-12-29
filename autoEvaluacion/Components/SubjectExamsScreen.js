@@ -14,6 +14,18 @@ const SubjectExamsScreen = () => {
 
   const [selectedFilter, setSelectedFilter] = useState(null);
   const filterOptions = ['Opcion multiple', 'Verdadero o falso', 'Abierta'];
+  const [filteredExams, setFilteredExams] = useState(passedExamsData);
+  
+  useEffect(() => {
+    if (selectedFilter) {
+      const updatedFilteredExams = passedExamsData.filter(
+        (exam) => exam.type === selectedFilter
+      );
+      setFilteredExams(updatedFilteredExams);
+    } else {
+      setFilteredExams(passedExamsData); 
+    }
+  }, [selectedFilter]);
 
 return (
     <View style={styles.passedExamsSection}>
@@ -36,7 +48,7 @@ return (
               selectedFilter === filter && 
               styles.selectedFilterItem
             ]}
-            onPress={() => setSelectedFilter(filter)}
+            onPress={() => {setSelectedFilter(prevFilter => prevFilter === filter ? null : filter)}}
             >
             <Text>{filter}</Text>
           </TouchableOpacity>
@@ -46,7 +58,7 @@ return (
       <View style={styles.separator} />
 
       <FlatList
-        data={passedExamsData}
+        data={filteredExams}
         renderItem={({ item }) => (
           <View style={styles.passedExamItem}>
             <View style = {styles.examDetail}>
@@ -61,6 +73,10 @@ return (
         )}
         keyExtractor={(item) => item.id}
       />
+      <TouchableOpacity 
+        style={styles.floatingButton} >
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -124,7 +140,22 @@ const styles = StyleSheet.create({
   },
   scoreText: {
     fontWeight: 'bold',
-  }
+  },
+  floatingButton: {
+  position: 'absolute',
+  bottom: 20,
+  right: 20,
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  backgroundColor: '#8BC34A',
+  alignItems: 'center',
+  justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 24,
+    color: '#fff',
+  },
 });
 
 export default SubjectExamsScreen;
