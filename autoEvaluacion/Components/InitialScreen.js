@@ -118,8 +118,8 @@ const InitialScreen = () => {
             onChangeText={(text) => setNewSubject(text)}
           />
           <View style={styles.popupButtons}>
-            <Button title="Cancel" onPress={() => setShowPopup(false)} />
-            <Button title="Add" onPress={addSubject} />
+            <Button title="Cancel"  color="#8BC34A" onPress={() => setShowPopup(false)} />
+            <Button title="Add"  color="#8BC34A"  onPress={addSubject} />
           </View>
         </View>
       </Modal>
@@ -201,12 +201,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#8BC34A',
+    padding: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, 
   },
   popupInput: {
-    height: 40,
+    height: 30,
+    width:'80%',
     borderColor: 'gray',
     borderWidth: 1,
-    borderRadius: 8,
+    borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 10,
   },
