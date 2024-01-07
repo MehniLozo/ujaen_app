@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import ArrowButton from '../utils/ArrowButton';
 import Choice from './QuestionTypes/Choice';
+import ParagForm from './QuestionTypes/ParagForm';
 
 const question =  "Cual es el dispositivo mas utilizando?"
 // const QuestionScreen = (questionNum = 1,questType = "choice",quest =question ,responseContent=choices) => {
-const QuestionScreen = ({options, question, currentQuestion,totalQuestions}) => {
+const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuestions,hasNext,hasPrec}) => {
   
   return(
 
@@ -17,8 +18,16 @@ const QuestionScreen = ({options, question, currentQuestion,totalQuestions}) => 
         </Text>
         <Text style={styles.question}>{question}</Text>
       </View>
-      <Choice options = {options}/>
-      <ArrowButton/>
+
+      {typeQuest === 1 ? (
+        <Choice options={options} />
+      ) : (
+        <ParagForm />
+      )}
+        <View style = {styles.arrowButtonContainer}>
+        {hasPrec && <ArrowButton direct="arrow-left" />}
+        {hasNext && <ArrowButton direct = "arrow-right"/>}
+        </View>
     </View>
   )
 }
@@ -42,6 +51,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     color: "white"
+  },
+  arrowButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
   },
 })
 
