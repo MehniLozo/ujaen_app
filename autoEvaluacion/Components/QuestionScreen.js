@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import Choice from './QuestionTypes/Choice'
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import ArrowButton from '../utils/ArrowButton';
 import Choice from './QuestionTypes/Choice';
 import ParagForm from './QuestionTypes/ParagForm';
@@ -24,6 +24,14 @@ const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuest
       ) : (
         <ParagForm />
       )}
+        <View style={styles.buttonContainer}>
+        <TouchableOpacity
+            style={styles.customButton}
+            underlayColor="darkgreen" 
+          >
+            <Text style={styles.buttonText}>Submit</Text>
+             </TouchableOpacity>
+        </View> 
         <View style = {styles.arrowButtonContainer}>
         {hasPrec && <ArrowButton direct="arrow-left" />}
         {hasNext && <ArrowButton direct = "arrow-right"/>}
@@ -56,6 +64,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  customButton: {
+    backgroundColor: 'green',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 })
 
