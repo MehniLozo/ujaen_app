@@ -25,12 +25,12 @@ const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuest
         <ParagForm />
       )}
         <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        {currentQuestion > totalQuestions /2 && <TouchableOpacity
             style={styles.customButton}
             underlayColor="darkgreen" 
           >
-            <Text style={styles.buttonText}>Submit</Text>
-             </TouchableOpacity>
+            <Text style={styles.buttonText}>Finalizar</Text>
+             </TouchableOpacity>}
         </View> 
         <View style = {styles.arrowButtonContainer}>
         {hasPrec && <ArrowButton direct="arrow-left" />}
