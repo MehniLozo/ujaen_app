@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 //import Choice from './QuestionTypes/Choice'
 import {View, Text, StyleSheet} from 'react-native';
 import ArrowButton from '../utils/ArrowButton';
-import Choice from './Choice';
+import Choice from './QuestionTypes/Choice';
 
 const question =  "Cual es el dispositivo mas utilizando?"
 // const QuestionScreen = (questionNum = 1,questType = "choice",quest =question ,responseContent=choices) => {
