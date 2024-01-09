@@ -6,28 +6,33 @@ const EvaluationScreen = () => {
   const questions = [
     {
       id: 1,
-      question: '¿Cómo te sientes hoy?',
-      options: ['Feliz', 'Triste', 'Emocionado', 'Cansado'],
+      question: '¿Que es react-native?',
+      options: ['Framework', 'Libreria', 'Lenguaje de programacion', 'Compilador ofical de Android'],
+      respuesta:0,
     },
     {
       id: 2,
-      question: '¿Cuál es tu color favorito?',
-      options: ['Rojo', 'Verde', 'Azul', 'Amarillo'],
+      question: '¿Que es react?',
+      options: ['Framework', 'Libreria', 'Lenguaje de programacion', 'Solamente JSX'],
+      respuesta:1,
     },
     {
       id: 3,
-      question: 'Describe tu día en una palabra:',
+      question: 'Describa en pocas palabras, ¿Que es JSX?',
       isTextInput: true,
+      respuesta:"es una extensión de JavaScript, junto con DOM",
     },
     {
         id: 4,
-        question: '¿Cuál es tu color favorito?',
-        options: ['Rojo', 'Verde', 'asda', 'Amarillo'],
+        question: '¿Cual es el SO mas utilizado para moviles?',
+        options: ['iOS', 'Windos phone', 'Android', 'Linux'],
+        respuesta:2,
       },
       {
         id: 5,
-        question: 'YA mdsdns:',
+        question: 'Describa en pocas palabras, ¿Como surgio Andorid?',
         isTextInput: true,
+        respuesta:"sistema operativo de camara",
       },
   ];
 
@@ -35,6 +40,7 @@ const EvaluationScreen = () => {
   const [textInputValue, setTextInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedAnswers, setSelectedAnswers] = useState(Array(questions.length).fill(null));
+  const [selectedIndexes, setSelectedIndexes] = useState(Array(questions.length).fill(null));
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -45,6 +51,12 @@ const EvaluationScreen = () => {
     newSelectedAnswers[currentQuestion] = answer;
     setSelectedAnswers(newSelectedAnswers);
     console.log(newSelectedAnswers)
+  };
+  const updateSelectedIndexes = (index) => {
+    const newSelectedIndexes = [...selectedIndexes];
+    newSelectedIndexes[currentQuestion] = index;
+    setSelectedIndexes(newSelectedIndexes);
+    console.log(newSelectedIndexes)
   };
   const handlePrevious = () => {
     if (currentQuestion > 0) {
@@ -64,17 +76,29 @@ const EvaluationScreen = () => {
           {
             text: 'Aceptar',
             onPress: () => {
+              var correct=0;
+              for( var i=0;i<questions.length;i++){
+                if(selectedIndexes[i]== questions[i].respuesta &&selectedIndexes[i]!=null &&  !questions[i].isTextInput){
+                  correct+=1;
+                  console.log("entro en el if")
+                }
+                else if(questions[i].isTextInput){
+                  
+                }
+              }
               console.log('Evaluación terminada');
               console.log('Respuestas:', selectedAnswers);
+              console.log('Correctas', correct);
             },
           },
         ],
         { cancelable: true }
       );
   };
-  const handleOptionSelect = (option) => {
+  const handleOptionSelect = (option,index) => {
     setSelectedOption(option);
     updateSelectedAnswers(option);
+    updateSelectedIndexes(index);
   };
   const handleOptionWrite = (option) => {
     setTextInputValue(option);
@@ -89,7 +113,7 @@ const EvaluationScreen = () => {
                         value={option}
                         status={selectedAnswers[currentQuestion] === option ?  
                                 'checked' : 'unchecked'} 
-                        onPress={() => handleOptionSelect(option)}
+                        onPress={() => handleOptionSelect(option,index)}
                         color="#007BFF"
                     /> 
                     <Text style={styles.radioLabel}> 
@@ -221,7 +245,7 @@ radioLabel: {
     bottom: 16,
     padding: 12,
     borderRadius: 8,
-    backgroundColor: '#3498db',
+    backgroundColor: '#006D38',
   },
   finishButton: {
     right: 'auto',
