@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ImageBackground } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text,TouchableOpacity, FlatList, StyleSheet, ImageBackground } from 'react-native';
+import { ScrollView,  } from 'react-native-gesture-handler';
 
 const backgroundImage = require('../images/tec.jpeg');
 
