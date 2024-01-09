@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, ProgressBarAndroid , Modal , Button} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -75,21 +76,18 @@ const InitialScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.icon} onPress={() => console.log('Burger menu clicked')}>
-          {/* Add your burger menu icon here */}
           <Text>☰</Text> 
         </TouchableOpacity>
         <TouchableOpacity style={styles.icon} onPress={() => console.log('Profile icon clicked')}>
-          {/* Add your profile icon here */}
           <Text>Welcome</Text>
         </TouchableOpacity>
         <Text style={styles.greetingText}>Hello Aziz</Text>
       </View>
 
-      {/* Search Bar */}
       <View style={styles.searchBar}>
+        <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search..."
@@ -97,7 +95,6 @@ const InitialScreen = () => {
         />
       </View>
 
-      {/* Quiz Cards */}
       <FlatList
         data={filteredData}
         renderItem={renderQuizCard}
@@ -106,7 +103,8 @@ const InitialScreen = () => {
       />
 
       <TouchableOpacity style={styles.floatingButton} onPress={() => setShowPopup(true)}>
-        <Text style={styles.buttonText}>+</Text>
+        {/*<Text style={styles.buttonText}>+</Text>*/}
+         <Icon name="pencil" size={20} color="white" backgroundColor="green"/>
       </TouchableOpacity>
 
      <Modal animationType="slide" transparent={true} visible={showPopup}>
@@ -148,25 +146,34 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchBar: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    flexDirection: 'row',
+    alignItems: 'center', 
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f7f7f7',
+  },
+  searchIcon:{
+    marginRight: 10,
   },
   searchInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingLeft: 10,
+    flex: 1,
+    paddingVertical: 10,
+    fontSize: 16,   
   },
   cardContainer: {
-    padding: 16,
+    padding: 20,
+    
   },
   quizCard: {
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 10,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 12,
+    width: '90%',
+    alignSelf:'center'
   },
   quizImage: {
     width: '100%',
@@ -174,11 +181,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   quizText: {
-    padding: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     fontSize: 16,
   },
 
     floatingButton: {
+    color:"green",
     position: 'absolute',
     bottom: 16,
     right: 16,
