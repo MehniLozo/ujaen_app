@@ -80,10 +80,10 @@ const InitialScreen = () => {
         <TouchableOpacity style={styles.icon} onPress={() => console.log('Burger menu clicked')}>
           <Text>☰</Text> 
         </TouchableOpacity>
-        <TouchableOpacity style={styles.icon} onPress={() => console.log('Profile icon clicked')}>
-          <Text>Welcome</Text>
+        <TouchableOpacity style={styles.profileIcon} onPress={() => console.log('Profile icon clicked')}>
+          <Text style={styles.greetingText}>Hola Aziz!</Text>
+          <Icon name="user" size={60} color="#888" />
         </TouchableOpacity>
-        <Text style={styles.greetingText}>Hello Aziz</Text>
       </View>
 
       <View style={styles.searchBar}>
@@ -134,16 +134,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    paddingHorizontal:16,
+    height: 60, 
   },
   icon: {
     padding: 10,
   },
+  profileIcon:{
+    flexDirection: 'row', 
+    alignItems: 'center',
+  },
   greetingText: {
-    fontSize: 18,
+    color: 'grey', 
+    fontSize: 20,
     fontWeight: 'bold',
+    marginRight: 30,
   },
   searchBar: {
     flexDirection: 'row',
