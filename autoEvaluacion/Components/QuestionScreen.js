@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 //import Choice from './QuestionTypes/Choice'
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Pressable} from 'react-native';
 import ArrowButton from '../utils/ArrowButton';
 import Choice from './QuestionTypes/Choice';
 import ParagForm from './QuestionTypes/ParagForm';
@@ -47,16 +47,19 @@ const QuestionScreen = ({route}) => {
             style={styles.customButton}
             underlayColor="darkgreen" 
             onPress={goToResult}
+            activeOpacity={0.6}
           >
             <Text style={styles.buttonText}>Finalizar</Text>
              </TouchableOpacity>}
         </View> 
         <View style = {styles.arrowButtonContainer}>
-        {hasPrec ? (<TouchableOpacity onPress={goToPrec}><ArrowButton direct="arrow-left" /></TouchableOpacity>): <View></View> }
+        {hasPrec ? (<TouchableOpacity onPress={goToPrec} activeOpacity={0.6} >
+          <ArrowButton direct="arrow-left" />
+          </TouchableOpacity>): <View></View> }
         {hasNext && 
-        (<TouchableOpacity onPress={goToFollow}> 
+        (<Pressable onPress={goToFollow}> 
             <ArrowButton direct = "arrow-right"/> 
-          </TouchableOpacity>)
+          </Pressable>)
         }
         </View>
     </View>

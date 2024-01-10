@@ -36,10 +36,12 @@ const ThemeList = ({ subject, onClose }) => {
             style={styles.themeItem}
             onPress={() => toggleThemeSelection(item.id)}
           >
+          <View style={styles.themeItemContent}>
           <View style={styles.checkboxContainer}>
             {isThemeSelected(item.id) && <View style={styles.checkbox} />}
           </View>
           <Text style={styles.themeText}>{item.name}</Text>
+          </View>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.id}
@@ -75,6 +77,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+   themeItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   checkboxContainer: {
     width: 24,
