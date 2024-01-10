@@ -8,8 +8,8 @@ const backgroundImage = require('../images/tec.jpeg');
 const data = [{"id":1,"question":"Cual es el dispositivo mas utilizado","correct": true},
 {"id":2,"question":"Cual es el dispositivo mas utilizado","correct": false}
 ];
-const ResultsScreen = ({achieved=5,numQuestions=10}) => {
- 
+const ResultsScreen = ({route}) => {
+  const {achieved=5,numQuestions=10} = route
 return (
     <View style={styles.passedQuestionSection}>
 

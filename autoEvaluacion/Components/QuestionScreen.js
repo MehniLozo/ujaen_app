@@ -21,6 +21,9 @@ const QuestionScreen = ({route}) => {
   const goToPrec = () => {
     navigation.navigate('Question', {options,question,typeQuest: 1, currentQuestion:1,totalQuestions:5,hasNext:true,hasPrec:false});
   }
+  const goToResult = () => {
+    navigation.navigate('Results');
+  }
 
   return(
 
@@ -43,6 +46,7 @@ const QuestionScreen = ({route}) => {
         {currentQuestion > totalQuestions /2 && <TouchableOpacity
             style={styles.customButton}
             underlayColor="darkgreen" 
+            onPress={goToResult}
           >
             <Text style={styles.buttonText}>Finalizar</Text>
              </TouchableOpacity>}
