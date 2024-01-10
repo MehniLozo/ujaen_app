@@ -1,5 +1,3 @@
-
-
 const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   try {
     const response = await fetch(`http://127.0.0.1:5000/obtenerEvaluacionesAsignatura/${nombreAsignatura}`)
