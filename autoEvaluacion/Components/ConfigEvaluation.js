@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Picker, StyleSheet,TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const EvaluationConfigScreen = () => {
+  const navigation = useNavigation();
+
+  const goToQuest = () => {
+    navigation.navigate('Question');
+  };
+
   const [evaluationName, setEvaluationName] = useState('');
   const [questionType, setQuestionType] = useState('opcionMultiple');
   const [numberOfQuestions, setNumberOfQuestions] = useState('');
@@ -10,10 +17,7 @@ const EvaluationConfigScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Configura tu evaluación</Text>
-      </View>
-      <TextInput
+     <TextInput
         style={styles.input}
         placeholder="Nombre de autoevaluación"
         value={evaluationName}
@@ -37,7 +41,7 @@ const EvaluationConfigScreen = () => {
         value={numberOfQuestions}
         onChangeText={(text) => setNumberOfQuestions(text)}
       />
-      <TouchableOpacity style={styles.startButton} >
+      <TouchableOpacity style={styles.startButton} onPress = {goToQuest} >
         <Text style={styles.startButtonText}>Iniciar autoevaluación</Text>
       </TouchableOpacity>
     </View>

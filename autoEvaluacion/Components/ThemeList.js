@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const ThemeList = ({ subject, onClose }) => {
+  const navigation = useNavigation();
+
+  const goToConfig = () => {
+    navigation.navigate('EVConfig');
+  };
   // Dummy data for themes (replace it with your actual data)
   const [selectedThemes, setSelectedThemes] = useState([]);
   const themesData = [
@@ -23,10 +29,7 @@ const ThemeList = ({ subject, onClose }) => {
   
   return (
     <View style = {styles.container}>
-      <View style = {styles.header}>
-        <Text style={styles.headerText}> Selecciona los temas que quieres probar </Text>
-      </View>
-      <FlatList 
+     <FlatList 
         data = {themesData}
         renderItem={({item}) => (
           <TouchableOpacity
@@ -41,7 +44,7 @@ const ThemeList = ({ subject, onClose }) => {
         )}
         keyExtractor={(item) => item.id}
         />
-        <TouchableOpacity style = {styles.floatingButton}>
+        <TouchableOpacity style = {styles.floatingButton} onPress = {goToConfig}>
           <Text style={styles.buttonText}>Configurar Autoevaluacion </Text>
         </TouchableOpacity>
     </View>

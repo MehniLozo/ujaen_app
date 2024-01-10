@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, ProgressBarAndroid , Modal , Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BurgerContent from './BurgerContent';
+import { useNavigation } from '@react-navigation/native';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -38,6 +39,11 @@ const InitialScreen = () => {
   const [newSubject, setNewSubject] = useState('');
   const [isMenuVisible, setMenuVisible] = useState(false);
 
+  const navigation = useNavigation();
+
+  const goToExams = () => {
+    navigation.navigate('SubjectsExams');
+  };
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
   };
@@ -77,7 +83,7 @@ const InitialScreen = () => {
 
   const renderQuizCard = ({ item }) => (
     <TouchableOpacity style={styles.quizCard}
-    onPress = {() => handleThemePress(item.id)}>
+    onPress = {goToExams}>
       <Image source={item.image} style={styles.quizImage} />
       <Text style={styles.quizText}>{item.subject}</Text>
     </TouchableOpacity>
