@@ -5,8 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 const EvaluationConfigScreen = () => {
   const navigation = useNavigation();
 
+  const question =  "Cual es el dispositivo mas utilizando?"
+  
   const goToQuest = () => {
-    navigation.navigate('Question');
+    navigation.navigate('Question', {options:null,question,typeQuest: 1, currentQuestion:1,totalQuestions:10,hasNext:true,hasPrec:false});
   };
 
   const [evaluationName, setEvaluationName] = useState('');

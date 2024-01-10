@@ -4,18 +4,33 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import ArrowButton from '../utils/ArrowButton';
 import Choice from './QuestionTypes/Choice';
 import ParagForm from './QuestionTypes/ParagForm';
+import { useNavigation } from '@react-navigation/native';
 
-const question =  "Cual es el dispositivo mas utilizando?"
 // const QuestionScreen = (questionNum = 1,questType = "choice",quest =question ,responseContent=choices) => {
-const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuestions,hasNext,hasPrec}) => {
+//const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuestions,hasNext,hasPrec}) => {
+const QuestionScreen = ({route}) => {
+
+  const { options, question, typeQuest, currentQuestion, totalQuestions, hasNext, hasPrec } = route.params; 
+  const navigation = useNavigation();
+
+  const secondQuest =  "Describe el entorno android"
   
+  const goToFollow = () => {
+    navigation.navigate('Question', {options:null,question:secondQuest,typeQuest: 2, currentQuestion:5,totalQuestions:5,hasNext:false,hasPrec:true});
+  };
+  const goToPrec = () => {
+    navigation.navigate('Question', {options,question,typeQuest: 1, currentQuestion:1,totalQuestions:5,hasNext:true,hasPrec:false});
+  }
+
   return(
 
     <View  style = {styles.container}>
       <View style={styles.header}>
+        <View style={styles.headerContent}>
         <Text style={styles.questionNumber}>
           {currentQuestion}/{totalQuestions}
         </Text>
+        </View>
         <Text style={styles.question}>{question}</Text>
       </View>
 
@@ -33,8 +48,12 @@ const QuestionScreen = ({options,typeQuest, question, currentQuestion,totalQuest
              </TouchableOpacity>}
         </View> 
         <View style = {styles.arrowButtonContainer}>
-        {hasPrec && <ArrowButton direct="arrow-left" />}
-        {hasNext && <ArrowButton direct = "arrow-right"/>}
+        {hasPrec ? (<TouchableOpacity onPress={goToPrec}><ArrowButton direct="arrow-left" /></TouchableOpacity>): <View></View> }
+        {hasNext && 
+        (<TouchableOpacity onPress={goToFollow}> 
+            <ArrowButton direct = "arrow-right"/> 
+          </TouchableOpacity>)
+        }
         </View>
     </View>
   )
@@ -50,6 +69,13 @@ const styles = StyleSheet.create({
       paddingVertical: 8,
       paddingHorizontal: 16,
       marginBottom: 16,
+      justifyContent: 'center',
+      alignItems: 'center' 
+  },
+  headerContent:{
+    flexDirection: 'row', 
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   question:{
     color:'white'
