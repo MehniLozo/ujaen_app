@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import LogoUJA from '../assets/LogoUJA.png'
 import { useNavigation } from '@react-navigation/native';
+
+
+
 const RestartScreen = () => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState("")
@@ -9,28 +12,24 @@ const RestartScreen = () => {
   const goToSignUp = () => {
     navigation.navigate('SingUp');
   };
-  const handleRestart = () => {
-    // Por ahora, simplemente imprime los datos de inicio de sesión
-    var emailValid = false;
-        var re = /^[\w-\.]+@(red.ujaen.es)|(red.ujaen)$/;
-        if( re.test(email)){
-            setEmailError("")
-            emailValid = true
-        }
-        else{
-            setEmailError('El email debe ser de la UJA');  
-        }
-        if(emailValid==false){
-          console.log("no puede iniciar sesion")
-        }
-        else{
-          console.log("si puede iniciar sesion")
-        }
-    console.log('Email:', email);
-  };
-   const handleRecu = () => {
-    // Por ahora, simplemente imprime
-    console.log('para que se olvida');
+
+
+  const handleRestart = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/api/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email}),
+      });
+
+      const data = await response.json();
+
+      console.log('Respuesta del servidor:', data);
+    } catch (error) {
+      console.error('Error llegado del servidor:', error);
+    }
   };
 
   return (

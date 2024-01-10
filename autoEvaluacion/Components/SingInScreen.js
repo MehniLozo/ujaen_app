@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet ,Alert} from 'react-native';
 import LogoUJA from '../assets/LogoUJA.png'
 import { useNavigation } from '@react-navigation/native';
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import deBd from "./InicializacionBd";
+
+
+// Inicializar la aplicación de Firebase
+const app = initializeApp(deBd.firebaseConfig);
+
 const SingInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,37 +23,73 @@ const SingInScreen = () => {
   const goToRestart = () => {
     navigation.navigate('Restart');
   };
-  const handleSingIn = () => {
-    // Por ahora, simplemente imprime los datos de inicio de sesión
-    var emailValid = false;
-        var re = /^[\w-\.]+@(red.ujaen.es)|(ujaen.es)$/;
-        if( re.test(email)){
-            setEmailError("")
-            emailValid = true
-        }
-        else{
-            setEmailError('El email debe ser de la UJA');  
-        }
-        var pss=/^(?!.* )(?=.*\d)(?=.*[A-Z])(?=.*[a-z]).{8,}$/;
-        var passwordValid = false;
-        if( pss.test(password)){
-            setPasswordError("")
-            passwordValid = true
-        }
-        else{
-            setPasswordError('La contraseña debe tener 8 caracteres, 1 numero, 1 simbolo, 1 min, 1 mayus');  
-        }
-        if(passwordValid==false||emailValid==false){
-          console.log("no puede iniciar sesion")
-        }
-        else{
-          console.log("si puede iniciar sesion")
-          navigation.navigate('Test');
-        }
-    console.log('Email:', email);
-    console.log('Password:', password);
+
+  const handleSignUp = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      console.log('Respuesta del servidor:', data);
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+    }
   };
 
+  
+const handleSignIn = async () => {
+  try {
+    // Inicializar la aplicación de Firebase
+    const app = initializeApp(deBd.firebaseConfig);
+
+    // Obtener la instancia de autenticación
+    const auth = getAuth(app);
+
+    // Intentar iniciar sesión con el correo electrónico y la contraseña
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+    // El inicio de sesión fue exitoso
+    console.log('Usuario autenticado:', userCredential);
+
+    // Aquí puedes navegar a otra pantalla o realizar acciones después del inicio de sesión exitoso.
+    navigation.navigate('Test');
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+
+    // Manejar errores de autenticación
+    if (error.code === 'auth/user-not-found') {
+      const errorMessage = 'Usuario no encontrado. Verifica tu correo electrónico.';
+      Alert.alert('Error', errorMessage);
+      window.alert(errorMessage); // Mostrar alerta en navegadores
+    } else if (error.code === 'auth/wrong-password') {
+      const errorMessage = 'Contraseña incorrecta. Verifica tu contraseña.';
+      Alert.alert('Error', errorMessage);
+      window.alert(errorMessage); // Mostrar alerta en navegadores
+    } else if (error.code === 'auth/invalid-email') {
+      const errorMessage = 'Correo electrónico inválido. Verifica tu correo electrónico.';
+      Alert.alert('Error', errorMessage);
+      window.alert(errorMessage); // Mostrar alerta en navegadores
+    } else if (error.code === 'auth/invalid-credential') {
+      const errorMessage = 'Credenciales de autenticación no válidas. Verifica sus posibles credenciales.';
+      Alert.alert('Error', errorMessage);
+      window.alert(errorMessage); // Mostrar alerta en navegadores
+    } else {
+      // Otros errores no especificados
+      const errorMessage = 'Ocurrió un error al iniciar sesión. Por favor, intenta nuevamente.';
+      Alert.alert('Error', errorMessage);
+      window.alert(errorMessage); // Mostrar alerta en navegadores
+    }
+  }
+};
+
+
+// navigation.navigate('Test');
   return (
     <View style={styles.container}>
       <View style={styles.encabezado}>
@@ -78,10 +122,10 @@ const SingInScreen = () => {
         {passwordError.length > 0 &&
                   <Text>{passwordError}</Text>
                 }
-        <TouchableOpacity style={styles.button} onPress={handleSingIn}>
+        <TouchableOpacity style={styles.button} onPress={handleSignIn}>
           <Text style={styles.buttonText}>Iniciar Sesión</Text>
         </TouchableOpacity>
-         <TouchableOpacity style={styles.button} onPress={goToSignUp}>
+         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Text style={styles.buttonText}>Registrarse</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.buttonOl} onPress={goToRestart}>

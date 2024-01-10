@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text,TouchableOpacity, FlatList, StyleSheet, ImageBackground } from 'react-native';
-import { ScrollView,  } from 'react-native-gesture-handler';
+import { View, Text, FlatList, StyleSheet, ImageBackground } from 'react-native';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 const backgroundImage = require('../images/tec.jpeg');
 
@@ -36,7 +36,7 @@ return (
         <TouchableOpacity>
           {/* return icon  */ }
         </TouchableOpacity>
-      <Text style={styles.headerText}>Te encuentras entre el top X de estudiantes autoevluados en esta asignatura</Text>
+      <Text style={styles.headerText}>Te encuentras entre el top X de estudiantes autoevaluados en esta asignatura</Text>
       </ImageBackground>
 
       <View style={styles.filterList}>
