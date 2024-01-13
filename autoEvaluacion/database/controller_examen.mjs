@@ -1,6 +1,7 @@
 import {BD} from "./firebase.js";
 import { PORT, obtenerIdUsuario } from "./config.mjs";
-import functions from "./functions.mjs";
+import functions, { evaluarRespuestaPregunta } from "./functions.mjs";
+// import { EvaluarPregunta } from "../APIs-handle.js";
 const idUserActual = obtenerIdUsuario(); 
 
 // Ruta POST para crear un examen
@@ -153,48 +154,72 @@ const evaluarRespuestaExamen = async (req, res) => {
       .get();
     const cantPreguntas = examenColeccionSnapshot.size;
     
-    if (cantPreguntas !== 5){
-      return res.json({message: "No tiene las 5 preguntas esperadas este examen."});
-    }
+    // if (cantPreguntas !== 5){
+    //   return res.json({message: "No tiene las 5 preguntas esperadas este examen."});
+    // }
 
     if (!req.body.evaluacion) {
-      let totalCalificaciones = 0;
-      let cantidadPreguntas = 0;
-
+      
       preguntasExamenRef
         .get()
-        .then((querySnapshot) => {
-          
-          querySnapshot.forEach((doc) => {
-            // Para cada pregunta, obtén la calificación y suma al total
-            const calificacion = doc.data().calificacionPregunta;
-            totalCalificaciones += calificacion;
-            cantidadPreguntas++;
-          });
+        .then(async(querySnapshot) => {//  TODAS LAS PREGUNTAS DEL EXAMEN
+          let totalCalificaciones = 0;
+          let cantidadPreguntas = 0;
 
-          if (cantidadPreguntas > 0) {
-            // Calcular el promedio
-            const promedioCalificaciones =
-              totalCalificaciones / cantidadPreguntas;
-            console.log("Promedio de calificaciones:", promedioCalificaciones);
-            evaluacion = promedioCalificaciones;
-            // Guardar el promedio en la variable "calificacionExamen"
-            examenesRef.doc(idExamen)
-              .update({ calificacionExamen: promedioCalificaciones })
-              .then(() => {
-                console.log(
-                  "Calificación del examen actualizada correctamente."
-                );
-              })
-              .catch((error) => {
-                console.error(
-                  "Error al actualizar la calificación del examen:",
-                  error
-                );
-              });
-          } else {
-            console.log("No hay preguntas en el examen.");
-          }
+console.log("SE OBTUVIERON LISTADO PREGUNTAS DE EXAMEN");
+
+const evaluacionesPromesas = [];
+
+querySnapshot.forEach((doc) => {
+  console.log("BUSCANDO CALIFICACION EN PREGUNTA");
+  const idPregunta = doc.data().idPregunta;
+  // Agrega la promesa devuelta por evaluarRespuestaPregunta al array
+  evaluacionesPromesas.push(evaluarRespuestaPregunta(idAsignatura, idExamen, idPregunta)
+    .then(() => {
+      const calificacion = doc.data().calificacionPregunta;
+      totalCalificaciones += calificacion;
+      cantidadPreguntas++;
+    })
+    .catch((error) => {
+      console.error('Error al evaluar respuesta de pregunta:', error);
+    }));
+});
+
+// Espera a que todas las promesas se resuelvan antes de continuar
+Promise.all(evaluacionesPromesas)
+  .then(() => {
+    console.log("SE TERMINO DE BUSCAR CALIFICACIONES, AHORA TOCA PROMEDIO");
+    console.log({ totalCalificaciones, cantidadPreguntas });
+
+    if (cantidadPreguntas) {
+      // Calcular el promedio
+      const promedioCalificaciones =
+        totalCalificaciones / cantidadPreguntas;
+      console.log("Promedio de calificaciones:", promedioCalificaciones);
+      evaluacion = promedioCalificaciones;
+      // Guardar el promedio en la variable "calificacionExamen"
+      examenesRef.doc(idExamen)
+        .update({ calificacionExamen: promedioCalificaciones })
+        .then(() => {
+          console.log(
+            "Calificación del examen actualizada correctamente."
+          );
+        })
+        .catch((error) => {
+          console.error(
+            "Error al actualizar la calificación del examen:",
+            error
+          );
+        });
+    } else {
+      console.log("No hay preguntas en el examen.");
+    }
+    
+  })
+  .catch((error) => {
+    console.error('Error al procesar evaluaciones:', error);
+  });
+
         })
         .catch((error) => {
           console.error("Error al obtener las preguntas:", error);
