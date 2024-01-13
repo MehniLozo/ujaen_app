@@ -1,4 +1,7 @@
+
+
 const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
+  /// "nombreAsignatura" tiene que ser un texto y estar escrito en snake_Case
   try {
     const response = await fetch(`http://127.0.0.1:5000/obtenerEvaluacionesAsignatura/${nombreAsignatura}`)
       .then((response) => {
@@ -19,14 +22,14 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   }
 }
 
-  const AddPreguntaExamen = async (nombreAsignatura, nombreExamen, enunciadoPregunta, tipoPregunta, respuestaCorrecta, curiosidadesPregunta) => {
+  const AddPreguntaExamen = async (nombreAsignatura, nombreExamen, temaPregunta, enunciadoPregunta, tipoPregunta, respuestaCorrecta, curiosidadesPregunta) => {
     try {
       const response = await fetch("http://127.0.0.1:5000/addPreguntaExamen", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombreAsignatura, nombreExamen, enunciadoPregunta, tipoPregunta, respuestaCorrecta, curiosidadesPregunta }),
+        body: JSON.stringify({ nombreAsignatura, nombreExamen, temaPregunta, enunciadoPregunta, tipoPregunta, respuestaCorrecta, curiosidadesPregunta }),
       });
       const data = await response.json();
 
@@ -36,14 +39,14 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
     }
   }
   
-  const crearExamen = async (nombreAsignatura, nombreExamen, fecha) => {
+  const crearExamen = async (nombreAsignatura, nombreExamen, temaExamen, tipoPreguntaExamen, fecha) => {
     try {
       const response = await fetch("http://127.0.0.1:5000/crearExamen/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ nombreAsignatura, nombreExamen, fecha }),
+        body: JSON.stringify({ nombreAsignatura, nombreExamen, temaExamen, tipoPreguntaExamen, fecha }),
       });
       const data = await response.json();
 
@@ -118,15 +121,85 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
       }
   };
 
+  const IniciarExamen = async (idExamen, idAsignatura, tiempoExamen) => {
+    //  EL TIEMPO DEL EXAMEN TIENE QUE SER UN NUMERO POSITIVO
+    //  EN EL FRONT TIENEN QUE FORZAR A QUE NO SE PUEDA INICIAR LA PRUEBA DOS VECES
+    //  SE HACE CON UNA BANDERA QUE PROHIBA LA LLAMADA A ESTA FUNCION
+  try {
+    const response = await fetch("http://127.0.0.1:5000/iniciarPrueba/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idExamen, idAsignatura, tiempoExamen }),
+    });
+    const data = await response.json();
+
+    console.log("Respuesta del servidor:", data);
+
+  } catch (error) {
+    console.error("Error al empezar el examen:", error);
+  }
+};
   
-module.exports = {
+const apisHandles = {
 	ObtenerExamenesAsignatura,
 	AddPreguntaExamen,
 	crearExamen,
 	obtenerAsignaturasUsuario,
 	AgregarAsignatura,
 	RegistrarUsuario,
-}
+  IniciarExamen,
+  EvaluarExamen,
+};
+export {apisHandles};
+
+
+//  NUEVOS CREADOS A AGREGAR EN LA LISTA DE APIs-HANDLES
+
+
+  async function EvaluarExamen(idExamen, idAsignatura, evaluacion = false) {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/evaluarRespuestaExamen/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ idExamen, idAsignatura , evaluacion}),
+      });
+      const data = await response.json();
+
+      console.log("Respuesta del servidor:", data);
+
+    } catch (error) {
+      console.error("Error al evaluar el examen:", error);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// module.exports = {
+// 	ObtenerExamenesAsignatura,
+// 	AddPreguntaExamen,
+// 	crearExamen,
+// 	obtenerAsignaturasUsuario,
+// 	AgregarAsignatura,
+// 	RegistrarUsuario,
+// }
+
 //	PARA UTILIZAR LAS FUNCIONES ESCRITAS AQUÍ DEBE AÑADIR EL CODIGO DE ABAJO EN LA PARTE SUPERIOR DEL FICHERO DESTINO,
 //	ACTUALIZANDO LA RUTA 
 // 		const operaciones = require('./funciones');

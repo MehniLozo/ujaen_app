@@ -66,24 +66,24 @@ const handleSignIn = async () => {
     if (error.code === 'auth/user-not-found') {
       const errorMessage = 'Usuario no encontrado. Verifica tu correo electrónico.';
       Alert.alert('Error', errorMessage);
-      window.alert(errorMessage); // Mostrar alerta en navegadores
+      // window.alert(errorMessage); // Mostrar alerta en navegadores
     } else if (error.code === 'auth/wrong-password') {
       const errorMessage = 'Contraseña incorrecta. Verifica tu contraseña.';
       Alert.alert('Error', errorMessage);
-      window.alert(errorMessage); // Mostrar alerta en navegadores
+      // window.alert(errorMessage); // Mostrar alerta en navegadores
     } else if (error.code === 'auth/invalid-email') {
       const errorMessage = 'Correo electrónico inválido. Verifica tu correo electrónico.';
       Alert.alert('Error', errorMessage);
-      window.alert(errorMessage); // Mostrar alerta en navegadores
+      // window.alert(errorMessage); // Mostrar alerta en navegadores
     } else if (error.code === 'auth/invalid-credential') {
       const errorMessage = 'Credenciales de autenticación no válidas. Verifica sus posibles credenciales.';
       Alert.alert('Error', errorMessage);
-      window.alert(errorMessage); // Mostrar alerta en navegadores
+      // window.alert(errorMessage); // Mostrar alerta en navegadores
     } else {
       // Otros errores no especificados
       const errorMessage = 'Ocurrió un error al iniciar sesión. Por favor, intenta nuevamente.';
       Alert.alert('Error', errorMessage);
-      window.alert(errorMessage); // Mostrar alerta en navegadores
+      // window.alert(errorMessage); // Mostrar alerta en navegadores
     }
   }
 };
