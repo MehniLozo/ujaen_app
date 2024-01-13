@@ -20,8 +20,8 @@ const HomeScreen = () => {
       <View style={styles.container}>
         <Svg height="110%" width="110%" style={styles.background}>
        <Circle cx="65%" cy="0%" r="70%" fill="#00A65D" />
-        <Circle cx="35%" cy="0%" r="44%" fill="#231F20" />
-        <Circle cx="46%" cy="-6%" r="35%" fill="#006D38" />
+        <Circle cx="35%" cy="0%" r="43%" fill="#231F20" />
+        <Circle cx="53%" cy="-6%" r="35%" fill="#006D38" />
       </Svg>
       <View style={styles.contentContainer}>
         <Image source={LogoUJA} style={styles.logo} />

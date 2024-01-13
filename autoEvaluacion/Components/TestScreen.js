@@ -106,7 +106,7 @@ const EvaluationScreen = () => {
   };
   const renderOptions = (options) => {
     return options.map((option, index) => (
-        <View style={styles.radioGroup}> 
+        <View style={styles.radioGroup}  key={index}> 
         <View style={styles.radioButton}> 
         <RadioButton style={{display: 'flex', justifyContent: 'center'}}
          key={index}
