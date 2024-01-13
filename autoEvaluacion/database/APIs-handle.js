@@ -1,3 +1,5 @@
+import { PORT } from "./database/config.mjs";
+
 
 
 const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
@@ -151,6 +153,8 @@ const apisHandles = {
 	RegistrarUsuario,
   IniciarExamen,
   EvaluarExamen,
+  EvaluarPregunta,
+  ResponderPregunta,
 };
 export {apisHandles};
 
@@ -178,9 +182,33 @@ export {apisHandles};
 
 
 
+async function EvaluarPregunta(idAsignatura, idExamen, idPregunta, evaluacion){
+  try {
+    const respu = await fetch(`http://127.0.0.1:${PORT}/evaluarRespuestaPregunta`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json",},
+      body: JSON.stringify({ idAsignatura, idExamen, idPregunta, evaluacion })
+    });
+    const data = await respu.json();
+    console.log("Respuesta de la operacion: ", data);
+  } catch (error) {
+    console.error("Error al intentar llamar a evaluar pregunta de prueba.");
+  }
+}
 
-
-
+async function ResponderPregunta(idAsignatura, idExamen, idPregunta, respuesta){
+  try {
+    const respu = await fetch(`http://127.0.0.1:${PORT}/almacenarRespuestaPregunta`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json",},
+      body: JSON.stringify({ idAsignatura, idExamen, idPregunta, respuesta })
+    });
+    const data = await respu.json();
+    console.log("Respuesta de la operacion: ", data);
+  } catch (error) {
+    console.error("Error al intentar llamar a evaluar pregunta de prueba.");
+  }
+}
 
 
 
