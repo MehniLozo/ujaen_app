@@ -11,12 +11,18 @@ import ConfigEvaluation from './Components/ConfigEvaluation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 LogBox.ignoreAllLogs();
+import InitialScreen from './Components/InitialScreen';
+import SubjectExamsScreen from './Components/SubjectExamsScreen';
+import ResultsScreen from './Components/ResultsScreen';
+import QuestionScreen from './Components/QuestionScreen';
+import ThemeList from './Components/ThemeList';
+import EvaluationConfigScreen from './Components/ConfigEvaluation';
 const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer style={styles.container}>
     <StatusBar backgroundColor = '#006D38' />
-  <Stack.Navigator initialRouteName="Home">
+  <Stack.Navigator initialRouteName="Subjects">
     <Stack.Screen style={styles.container} options={{ title: '', headerStyle: {
             backgroundColor: '#006D38'},headerTitleStyle: {
               color: 'white'
@@ -56,6 +62,48 @@ export default function App() {
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Test" component={TestScreen} />
+    <Stack.Screen 
+      options={{ title: 'Subjects', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="Subjects" component={InitialScreen}
+    />
+    <Stack.Screen 
+      options={{ title: 'SubjectsExams', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="SubjectsExams" component={SubjectExamsScreen}
+    />
+    <Stack.Screen 
+      options={{ title: 'Selecciona los temas que quieres probar ', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="Themes" component={ThemeList}
+    />
+    <Stack.Screen 
+      options={{ title: 'Configura tu evaluacion ', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="EVConfig" component={EvaluationConfigScreen}
+    />
+    <Stack.Screen 
+      options={{ title: 'Question', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="Question" component={QuestionScreen}
+    />
+    <Stack.Screen 
+      options={{ title: 'results', headerStyle: {
+            backgroundColor: '#006D38'
+         },headerTitleStyle: {
+          color: 'white'
+        },headerTintColor: 'white' }} name="Results" component={ResultsScreen}
+    />
   </Stack.Navigator>
   
 </NavigationContainer>
