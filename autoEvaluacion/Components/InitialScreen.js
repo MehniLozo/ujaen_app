@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, ProgressBarAndroid , Modal , Button} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import BurgerContent from './BurgerContent';
+import { useNavigation } from '@react-navigation/native';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -34,7 +37,20 @@ const InitialScreen = () => {
 
   const [showPopup, setShowPopup] = useState(false);
   const [newSubject, setNewSubject] = useState('');
+  const [isMenuVisible, setMenuVisible] = useState(false);
 
+  const navigation = useNavigation();
+
+  const goToExams = () => {
+    navigation.navigate('SubjectsExams');
+  };
+  const toggleMenu = () => {
+    setMenuVisible(!isMenuVisible);
+  };
+
+  const closeMenu = () => {
+    setMenuVisible(false);
+  };
 
   useEffect(() => {
     const newFilteredData = quizData.filter(item => item.subject.toLowerCase().includes(searchText.toLowerCase()));
@@ -67,7 +83,7 @@ const InitialScreen = () => {
 
   const renderQuizCard = ({ item }) => (
     <TouchableOpacity style={styles.quizCard}
-    onPress = {() => handleThemePress(item.id)}>
+    onPress = {goToExams}>
       <Image source={item.image} style={styles.quizImage} />
       <Text style={styles.quizText}>{item.subject}</Text>
     </TouchableOpacity>
@@ -75,21 +91,28 @@ const InitialScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Top Bar */}
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.icon} onPress={() => console.log('Burger menu clicked')}>
-          {/* Add your burger menu icon here */}
+        <TouchableOpacity style={styles.icon} onPress={toggleMenu}>
           <Text>☰</Text> 
         </TouchableOpacity>
-        <TouchableOpacity style={styles.icon} onPress={() => console.log('Profile icon clicked')}>
-          {/* Add your profile icon here */}
-          <Text>Welcome</Text>
+        <TouchableOpacity style={styles.profileIcon} onPress={() => console.log('Profile icon clicked')}>
+          <Text style={styles.greetingText}>Hola Aziz!</Text>
+          <Icon name="user" size={60} color="#888" />
         </TouchableOpacity>
-        <Text style={styles.greetingText}>Hello Aziz</Text>
       </View>
 
-      {/* Search Bar */}
+      {isMenuVisible && <Modal 
+        isVisible={isMenuVisible}
+        onBackdropPress={closeMenu}
+        swipeDirection="left"
+        onSwipeComplete={closeMenu}
+        style={styles.burgerModal}
+      >
+        <BurgerContent onClose={closeMenu} />
+      </Modal>}
+
       <View style={styles.searchBar}>
+        <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search..."
@@ -97,7 +120,6 @@ const InitialScreen = () => {
         />
       </View>
 
-      {/* Quiz Cards */}
       <FlatList
         data={filteredData}
         renderItem={renderQuizCard}
@@ -106,7 +128,8 @@ const InitialScreen = () => {
       />
 
       <TouchableOpacity style={styles.floatingButton} onPress={() => setShowPopup(true)}>
-        <Text style={styles.buttonText}>+</Text>
+        {/*<Text style={styles.buttonText}>+</Text>*/}
+         <Icon name="pencil" size={20} color="white" backgroundColor="green"/>
       </TouchableOpacity>
 
      <Modal animationType="slide" transparent={true} visible={showPopup}>
@@ -132,41 +155,62 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  burgerModal: {
+    margin: 0,
+    justifyContent: 'flex-start',
+  },
   topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+    paddingHorizontal:16,
+    height: 60, 
   },
   icon: {
     padding: 10,
   },
+  profileIcon:{
+    flexDirection: 'row', 
+    alignItems: 'center',
+  },
   greetingText: {
-    fontSize: 18,
+    color: 'grey', 
+    fontSize: 20,
     fontWeight: 'bold',
+    marginRight: 30,
   },
   searchBar: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+    flexDirection: 'row',
+    alignItems: 'center', 
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f7f7f7',
+  },
+  searchIcon:{
+    marginRight: 10,
   },
   searchInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingLeft: 10,
+    flex: 1,
+    paddingVertical: 10,
+    fontSize: 16,   
   },
   cardContainer: {
-    padding: 16,
+    padding: 20,
+    
   },
   quizCard: {
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 10,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 12,
+    width: '90%',
+    alignSelf:'center'
   },
   quizImage: {
     width: '100%',
@@ -174,11 +218,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   quizText: {
-    padding: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     fontSize: 16,
   },
 
     floatingButton: {
+    color:"green",
     position: 'absolute',
     bottom: 16,
     right: 16,

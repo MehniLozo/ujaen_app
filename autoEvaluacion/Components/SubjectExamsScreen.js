@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, ImageBackground } from 'react-native';
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const backgroundImage = require('../images/tec.jpeg');
 
 const SubjectExamsScreen = () => {
   // Dummy data for passed exams
+  const navigation = useNavigation();
+
+  const goToThemes = () => {
+    navigation.navigate('Themes');
+  };
+
   const passedExamsData = [
     { id: '1', nombre:"Nombre Examen" , score: 80, type: 'Opcion multiple', date: '2023-01-15' },
     { id: '2', nombre:"Nombre Examen", score: 90, type: 'Verdadero o falso', date: '2023-02-10' },
@@ -74,7 +81,7 @@ return (
         keyExtractor={(item) => item.id}
       />
       <TouchableOpacity 
-        style={styles.floatingButton} >
+        style={styles.floatingButton} onPress = {goToThemes} >
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
     </View>

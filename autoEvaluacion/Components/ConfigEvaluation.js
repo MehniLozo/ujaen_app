@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Picker, StyleSheet,TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet,TouchableOpacity } from 'react-native';
+import {Picker} from '@react-native-community/picker';
+import { useNavigation } from '@react-navigation/native';
 
 const EvaluationConfigScreen = () => {
+  const navigation = useNavigation();
+
+  const question =  "Cual es el dispositivo mas utilizando?"
+  
+  const goToQuest = () => {
+    navigation.navigate('Question', {options:null,question,typeQuest: 1, currentQuestion:1,totalQuestions:10,hasNext:true,hasPrec:false});
+  };
+
   const [evaluationName, setEvaluationName] = useState('');
   const [questionType, setQuestionType] = useState('opcionMultiple');
   const [numberOfQuestions, setNumberOfQuestions] = useState('');
@@ -10,10 +20,7 @@ const EvaluationConfigScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Configura tu evaluación</Text>
-      </View>
-      <TextInput
+     <TextInput
         style={styles.input}
         placeholder="Nombre de autoevaluación"
         value={evaluationName}
@@ -37,7 +44,7 @@ const EvaluationConfigScreen = () => {
         value={numberOfQuestions}
         onChangeText={(text) => setNumberOfQuestions(text)}
       />
-      <TouchableOpacity style={styles.startButton} >
+      <TouchableOpacity style={styles.startButton} onPress = {goToQuest} >
         <Text style={styles.startButtonText}>Iniciar autoevaluación</Text>
       </TouchableOpacity>
     </View>
