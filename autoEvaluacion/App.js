@@ -10,10 +10,9 @@ import QuestionScreen from './Components/QuestionScreen';
 import ConfigEvaluation from './Components/ConfigEvaluation';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+LogBox.ignoreAllLogs();
 import InitialScreen from './Components/InitialScreen';
-import SubjectExamsScreen from './Components/SubjectExamsScreen';
 import ResultsScreen from './Components/ResultsScreen';
-import QuestionScreen from './Components/QuestionScreen';
 import ThemeList from './Components/ThemeList';
 import EvaluationConfigScreen from './Components/ConfigEvaluation';
 const Stack = createStackNavigator();
@@ -105,8 +104,7 @@ export default function App() {
     />
   </Stack.Navigator>
   
-  </NavigationContainer>
-
+</NavigationContainer>
   );
 }
 

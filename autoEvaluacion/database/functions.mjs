@@ -1,3 +1,4 @@
+import { PORT } from "./config.mjs";
 import {BD} from "./firebase.js";
 
 
@@ -80,9 +81,27 @@ export async function obtenerBDaPartirReferencia(docRef) {
   }
 }
 
+export async function evaluarRespuestaPregunta(idAsignatura, idExamen, idPregunta, evaluacion){
+  try {
+    const respu = await fetch(`http://127.0.0.1:${PORT}/evaluarRespuestaPregunta`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json",},
+      body: JSON.stringify({ idAsignatura, idExamen, idPregunta, evaluacion })
+    });
+    const data = await respu.json();
+    console.log("Respuesta de la operacion: ", data);
+  } catch (error) {
+    console.error("Error al intentar llamar a evaluar pregunta de prueba.");
+  }
+}
+
+
+
+
+
 // const funtions = {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia};
 // export default funtions
 
-export default {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia}
+export default {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia, evaluarRespuestaPregunta}
 
 
