@@ -1,6 +1,6 @@
-import { PORT } from "./database/config.mjs";
+// import { PORT } from "./database/config.mjs";
 
-
+const PORT =5000;
 
 const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   /// "nombreAsignatura" tiene que ser un texto y estar escrito en snake_Case
@@ -61,19 +61,21 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   const obtenerAsignaturasUsuario = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/obtenerAsignaturasUsuario")
-        .then((response) => {
+        .then(async (response) => {
           // Verifica si la respuesta es exitosa (código de estado 200-299)
           if (!response.ok) {
             throw new Error(`Error de red - Código: ${response.status}`);
           }
           // Parsea la respuesta JSON
-          return response.json();
+          return await response.json();
         })
         .then((data) => {
           // Maneja los datos obtenidos
           console.log("Datos recibidos:", data);
+          return data.asignaturas;
         });
       // const data = await response.json();
+      return response
     } catch (error) {
       console.error("Error al obtener las asignaturas del usuarioCatch:", error);
     }
@@ -209,6 +211,3 @@ async function ResponderPregunta(idAsignatura, idExamen, idPregunta, respuesta){
     console.error("Error al intentar llamar a evaluar pregunta de prueba.");
   }
 }
-
-
-
