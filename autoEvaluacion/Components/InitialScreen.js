@@ -138,7 +138,7 @@ const InitialScreen = () => {
         <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Buscar..."
           onChangeText={(text) => setSearchText(text)}
         />
       </View>
@@ -152,20 +152,21 @@ const InitialScreen = () => {
 
       <TouchableOpacity style={styles.floatingButton} onPress={() => setShowPopup(true)}>
         {/*<Text style={styles.buttonText}>+</Text>*/}
-         <Icon name="pencil" size={20} color="white" backgroundColor="green"/>
+         <Icon name="pencil" size={20} color="white" backgroundColor="#006D38"/>
       </TouchableOpacity>
 
      <Modal animationType="slide" transparent={true} visible={showPopup}>
         <View style={styles.popup}>
           <TextInput
             style={styles.popupInput}
-            placeholder="Enter Subject Name"
+            placeholder="Ingrese el nombre de la asignatura"
+            placeholderTextColor="white"
             value={newSubject}
             onChangeText={(text) => setNewSubject(text)}
           />
           <View style={styles.popupButtons}>
-            <Button title="Cancel"  color="#8BC34A" onPress={() => setShowPopup(false)} />
-            <Button title="Add"  color="#8BC34A"  onPress={addSubject} />
+            <Button title="Cancelar"  color="#006D38" onPress={() => setShowPopup(false)} />
+            <Button title="Agregar"  color="#006D38"  onPress={addSubject} />
           </View>
         </View>
       </Modal>
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right: 16,
-    backgroundColor: '#2196F3',
+    backgroundColor: '#006D38',
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#8BC34A',
+    backgroundColor: '#006D38',
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
@@ -285,15 +286,17 @@ const styles = StyleSheet.create({
   popupInput: {
     height: 30,
     width:'80%',
-    borderColor: 'gray',
+    borderColor: 'white',
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
+    color: 'white',
     marginBottom: 10,
   },
 
     popupButtons: {
     flexDirection: 'row',
+    
     justifyContent: 'space-around',
     width: '80%',
   },

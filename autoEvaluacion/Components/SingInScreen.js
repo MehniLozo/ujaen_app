@@ -58,7 +58,7 @@ const handleSignIn = async () => {
     console.log('Usuario autenticado:', userCredential);
 
     // Aquí puedes navegar a otra pantalla o realizar acciones después del inicio de sesión exitoso.
-    navigation.navigate('Test');
+    navigation.navigate('Subjects');
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
 
