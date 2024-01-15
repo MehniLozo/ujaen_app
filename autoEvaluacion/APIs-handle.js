@@ -6,19 +6,21 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   /// "nombreAsignatura" tiene que ser un texto y estar escrito en snake_Case
   try {
     const response = await fetch(`http://127.0.0.1:5000/obtenerEvaluacionesAsignatura/${nombreAsignatura}`)
-      .then((response) => {
+      .then(async (response) => {
         // Verifica si la respuesta es exitosa (código de estado 200-299)
         if (!response.ok) {
           throw new Error(`Error de red - Código: ${response.status}`);
         }
         // Parsea la respuesta JSON
-        return response.json();
+        return await response.json();
       })
-      .then((data) => {
+      .then(async (data) => {
         // Maneja los datos obtenidos
-        console.log(`Examenes Aplicados en la asignatura ${nombreAsignatura}:`, data);
+        console.log(`Examenes Aplicados en la asignatura ${nombreAsignatura}:`, data.evaluacionesConPreguntasResueltas);
+        return await data.evaluacionesConPreguntasResueltas
       });
     // const data = await response.json();
+    return await response
   } catch (error) {
     console.error("Error al obtener los examenes aplicados en la asignatura, en el usuarioCatch:", error);
   }
@@ -211,3 +213,25 @@ async function ResponderPregunta(idAsignatura, idExamen, idPregunta, respuesta){
     console.error("Error al intentar llamar a evaluar pregunta de prueba.");
   }
 }
+
+
+
+
+
+
+
+
+
+
+// module.exports = {
+// 	ObtenerExamenesAsignatura,
+// 	AddPreguntaExamen,
+// 	crearExamen,
+// 	obtenerAsignaturasUsuario,
+// 	AgregarAsignatura,
+// 	RegistrarUsuario,
+// }
+
+//	PARA UTILIZAR LAS FUNCIONES ESCRITAS AQUÍ DEBE AÑADIR EL CODIGO DE ABAJO EN LA PARTE SUPERIOR DEL FICHERO DESTINO,
+//	ACTUALIZANDO LA RUTA 
+// 		const operaciones = require('./funciones');
