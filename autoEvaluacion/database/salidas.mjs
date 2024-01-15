@@ -10,7 +10,7 @@ import {eliminarSubcadena} from "./functions.mjs";
 
 function salidaAlt(response) {
     let [pregunta, alternativas, correcta] = tomarAlternativas(response);
-    pregunta = `<p>${pregunta.split(":")[1]} </p>`;
+    pregunta = `${pregunta.split(":")[1]}`;
     let letraMayuscula = correcta.toUpperCase();
     let numeroCorrecta = letraMayuscula.charCodeAt(0) - 'A'.charCodeAt(0);
     let enviarAPI = 1;
@@ -24,7 +24,7 @@ function salidaAlt(response) {
     alternativas.forEach((item, index) => {
         let dic = {
             idOpcion: id[index],
-            descripcion: `<p>${item} </p>`,
+            descripcion: `${item}`,
             correcta: numeroCorrecta === index
         };
         respuesta.push(dic);
@@ -36,7 +36,7 @@ function salidaAlt(response) {
 
 async function salidaVF(response) {
     let [pregunta, respuesta, justificacion] = await limpiarVF2(response);
-    // pregunta = `<p>${pregunta} </p>`;
+    // pregunta = `${pregunta}`;
     // let id = ["10", "20"];
     let enviarAPI = 1;
     // let opciones = [["Verdadera", "V"], ["Falsa", "F"]];

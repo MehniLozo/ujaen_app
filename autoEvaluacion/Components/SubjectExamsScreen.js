@@ -28,6 +28,8 @@ const SubjectExamsScreen = ({ route }) => {     //  NEW
         temaExamen: examen.temaExamen,
         type: examen.tipoPreguntaExamen,
       }));
+      // console.log("data =", data)
+      
       setPassedExamsData(data);
       setFilteredExams(data);
     } catch (error) {
@@ -40,15 +42,15 @@ const SubjectExamsScreen = ({ route }) => {     //  NEW
   }, []);
 
   
-  const goToQuestions = (idExamen, preguntasExamen) => {
+  const goToQuestions = (idExamen, preguntasExamen, score) => {
     //  ELEGIR LOS ATRIBUTOS QUE DESEA PASARLE A LA SIGUIENTE VENTANA (COMPONENTE) QUE DEBE SER DE REVISAR PREGUNTAS DEL EXAMEN YA REALIZADO
-    navigation.navigate('Results', { idAsignatura , idExamen , preguntasExamen } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
+    navigation.navigate('Results', { idAsignatura , idExamen , preguntasExamen , score } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
   };
 
   //  ESTA PUEDE SER UNA VENTANA PARA RESOLVER LA PRUEBA
-  const goToResolve = (idExamen, preguntasExamen) => {
+  const goToResolve = (idExamen, preguntasExamen, score) => {
     //  ELEGIR LOS ATRIBUTOS QUE DESEA PASARLE A LA SIGUIENTE VENTANA (COMPONENTE) QUE DEBE SER DE RESOLVER PREGUNTAS DEL EXAMEN  SIN HACER
-    navigation.navigate('Test', { idAsignatura , idExamen , preguntasExamen } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
+    navigation.navigate('Results', { idAsignatura , idExamen , preguntasExamen } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
   };
 
 
@@ -114,7 +116,7 @@ return (
       renderItem={({ item }) => (
         <TouchableOpacity
           style={styles.quizCard}
-          onPress={() => {( item.estado.includes("Terminado")) ? goToQuestions(item.id, item.preguntasExamen) : goToResolve(item.id , item.preguntasExamen) }} // DEFINIR goToResolve
+          onPress={() => {( !item.estado.includes("Terminado")) ? goToQuestions(item.id, item.preguntasExamen, item.score) : goToResolve(item.id , item.preguntasExamen, item.score) }} // DEFINIR goToResolve
         >
           <View style={styles.passedExamItem}>
             <View style={styles.examDetail}>
