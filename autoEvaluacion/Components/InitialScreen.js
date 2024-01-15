@@ -4,6 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import BurgerContent from './BurgerContent';
 import { useNavigation } from '@react-navigation/native';
 import { apisHandles } from '../APIs-handle';
+import { AgregarAsignatura } from '../APIs-handle';
+import { Button, View } from 'react-native';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -84,7 +86,7 @@ const InitialScreen = () => {
     setFilteredData(newFilteredData);
   }, [searchText, quizData]);
 
-  const addSubject = () => {
+ // const addSubject = () => {
     if (newSubject.trim() !== '') {
 
       quizData = [...quizData, { id: (quizData.length + 1).toString(), subject: newSubject, image: require('../images/tec.jpeg')}];
@@ -93,7 +95,24 @@ const InitialScreen = () => {
 
       setFilteredData(quizData.filter(item => item.subject.toLowerCase().includes(searchText.toLowerCase())));
     }
-  };
+ // };
+ const addSubject = async () => {
+  try {
+    const estado = await AgregarAsignatura(newSubject, 'Descripción de la asignatura', 3);
+    if (estado) {
+      console.log('Asignatura agregada exitosamente');
+      
+    } else {
+      console.log('No se pudo agregar la asignatura');
+      
+    }
+    setShowPopup(false); 
+    console.error('Error al agregar la asignatura:', error);
+  }catch (error) {
+    console.error('Error al agregar la asignatura:', error);
+  }
+}
+;
 
 
   const examsData = [
@@ -168,9 +187,12 @@ const InitialScreen = () => {
             value={newSubject}
             onChangeText={(text) => setNewSubject(text)}
           />
+
+          
           <View style={styles.popupButtons}>
             <Button title="Cancelar"  color="#006D38" onPress={() => setShowPopup(false)} />
-            <Button title="Agregar"  color="#006D38"  onPress={addSubject} />
+            <Button title="Agregar" color="#006D38" onPress={addSubject} />
+
           </View>
         </View>
       </Modal>
