@@ -20,7 +20,7 @@ export default function App() {
   return (
     <NavigationContainer style={styles.container}>
     <StatusBar backgroundColor = '#006D38' />
-  <Stack.Navigator initialRouteName="Subjects">
+  <Stack.Navigator initialRouteName="Home">
     <Stack.Screen style={styles.container} options={{ title: '', headerStyle: {
             backgroundColor: '#006D38'},headerTitleStyle: {
               color: 'white'
@@ -55,48 +55,48 @@ export default function App() {
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Restart" component={RestartScreen} />
-    <Stack.Screen  options={{ title: 'Evaluacion',headerLeft: null, headerStyle: {
+    <Stack.Screen  options={{ title: 'Evaluacion', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Test" component={TestScreen} />
     <Stack.Screen 
-      options={{ title: 'Subjects', headerStyle: {
+      options={{ title: 'Asignaturas',headerLeft: null, headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Subjects" component={InitialScreen}
     />
     <Stack.Screen 
-      options={{ title: 'SubjectsExams', headerStyle: {
+      options={{ title: 'Examenes', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="SubjectsExams" component={SubjectExamsScreen}
     />
     <Stack.Screen 
-      options={{ title: 'Selecciona los temas que quieres probar ', headerStyle: {
+      options={{ title: 'Selecciona los temas', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Themes" component={ThemeList}
     />
     <Stack.Screen 
-      options={{ title: 'Configura tu evaluacion ', headerStyle: {
+      options={{ title: 'Configura tu evaluacion', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="EVConfig" component={EvaluationConfigScreen}
     />
     <Stack.Screen 
-      options={{ title: 'Question', headerStyle: {
+      options={{ title: 'Pregunta', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'
         },headerTintColor: 'white' }} name="Question" component={QuestionScreen}
     />
     <Stack.Screen 
-      options={{ title: 'results', headerStyle: {
+      options={{ title: 'Resultado', headerStyle: {
             backgroundColor: '#006D38'
          },headerTitleStyle: {
           color: 'white'

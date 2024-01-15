@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, P
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BurgerContent from './BurgerContent';
 import { useNavigation } from '@react-navigation/native';
+import { apisHandles } from '../APIs-handle';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -12,12 +13,13 @@ import BMenu from './components/BMenu';
 // import { createStackNavigator } from '@react-navigation/stack';
 
 
-let quizData = [
-  { id: '1', subject: 'Math',  image: require('../images/tec.jpeg') },
-  { id: '2', subject: 'Science', image: require('../images/tec.jpeg') },
-  { id: '3', subject: 'Large Language Models LLMs',image: require('../images/tec.jpeg') },
-  { id: '4', subject: 'Management', image: require('../images/tec.jpeg') },
-];
+
+// let quizData = [
+//   { id: '1', subject: 'Math',  image: require('../images/tec.jpeg') },
+//   { id: '2', subject: 'Science', image: require('../images/tec.jpeg') },
+//   { id: '3', subject: 'Large Language Models LLMs',image: require('../images/tec.jpeg') },
+//   { id: '4', subject: 'Management', image: require('../images/tec.jpeg') },
+// ];
 /*
 const DrawerContent = () => (
   <View style={styles.drawerContent}>
@@ -32,17 +34,38 @@ const DrawerContent = () => (
 */
 
 const InitialScreen = () => {
+  
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-
   const [showPopup, setShowPopup] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [isMenuVisible, setMenuVisible] = useState(false);
-
+  const [quizData, setQuizData] = useState([]);
   const navigation = useNavigation();
 
-  const goToExams = () => {
-    navigation.navigate('SubjectsExams');
+  const fetchData = async () => {
+    try {
+      let respu = await Promise.resolve(apisHandles.obtenerAsignaturasUsuario());
+      console.log(respu)
+      const data = respu.map((asignatura) => ({
+        id: asignatura.idAsignatura,
+        subject: asignatura.nombreAsignatura,
+        image: require('../images/tec.jpeg'),
+      }));
+      setQuizData(data);
+      setFilteredData(data);
+    } catch (error) {
+      console.error('Error al obtener las asignaturas del usuario:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const goToExams = (id , subject) => {
+    console.log(id,subject)
+    navigation.navigate('SubjectsExams',{ id, subject });
   };
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
@@ -55,7 +78,7 @@ const InitialScreen = () => {
   useEffect(() => {
     const newFilteredData = quizData.filter(item => item.subject.toLowerCase().includes(searchText.toLowerCase()));
     setFilteredData(newFilteredData);
-  }, [searchText]);
+  }, [searchText, quizData]);
 
   const addSubject = () => {
     if (newSubject.trim() !== '') {
@@ -83,7 +106,7 @@ const InitialScreen = () => {
 
   const renderQuizCard = ({ item }) => (
     <TouchableOpacity style={styles.quizCard}
-    onPress = {goToExams}>
+    onPress = {() => goToExams(item.id, item.subject)}>
       <Image source={item.image} style={styles.quizImage} />
       <Text style={styles.quizText}>{item.subject}</Text>
     </TouchableOpacity>
@@ -115,7 +138,7 @@ const InitialScreen = () => {
         <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search..."
+          placeholder="Buscar..."
           onChangeText={(text) => setSearchText(text)}
         />
       </View>
@@ -129,20 +152,21 @@ const InitialScreen = () => {
 
       <TouchableOpacity style={styles.floatingButton} onPress={() => setShowPopup(true)}>
         {/*<Text style={styles.buttonText}>+</Text>*/}
-         <Icon name="pencil" size={20} color="white" backgroundColor="green"/>
+         <Icon name="pencil" size={20} color="white" backgroundColor="#006D38"/>
       </TouchableOpacity>
 
      <Modal animationType="slide" transparent={true} visible={showPopup}>
         <View style={styles.popup}>
           <TextInput
             style={styles.popupInput}
-            placeholder="Enter Subject Name"
+            placeholder="Ingrese el nombre de la asignatura"
+            placeholderTextColor="white"
             value={newSubject}
             onChangeText={(text) => setNewSubject(text)}
           />
           <View style={styles.popupButtons}>
-            <Button title="Cancel"  color="#8BC34A" onPress={() => setShowPopup(false)} />
-            <Button title="Add"  color="#8BC34A"  onPress={addSubject} />
+            <Button title="Cancelar"  color="#006D38" onPress={() => setShowPopup(false)} />
+            <Button title="Agregar"  color="#006D38"  onPress={addSubject} />
           </View>
         </View>
       </Modal>
@@ -228,7 +252,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 16,
     right: 16,
-    backgroundColor: '#2196F3',
+    backgroundColor: '#006D38',
     borderRadius: 30,
     width: 60,
     height: 60,
@@ -247,7 +271,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#8BC34A',
+    backgroundColor: '#006D38',
     padding: 20,
     borderRadius: 10,
     shadowColor: '#000',
@@ -262,15 +286,17 @@ const styles = StyleSheet.create({
   popupInput: {
     height: 30,
     width:'80%',
-    borderColor: 'gray',
+    borderColor: 'white',
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
+    color: 'white',
     marginBottom: 10,
   },
 
     popupButtons: {
     flexDirection: 'row',
+    
     justifyContent: 'space-around',
     width: '80%',
   },
