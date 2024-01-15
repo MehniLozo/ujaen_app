@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, P
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BurgerContent from './BurgerContent';
 import { useNavigation } from '@react-navigation/native';
+import { apisHandles } from '../APIs-handle';
 /*import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import BMenu from './components/BMenu';
@@ -12,12 +13,13 @@ import BMenu from './components/BMenu';
 // import { createStackNavigator } from '@react-navigation/stack';
 
 
-let quizData = [
-  { id: '1', subject: 'Math',  image: require('../images/tec.jpeg') },
-  { id: '2', subject: 'Science', image: require('../images/tec.jpeg') },
-  { id: '3', subject: 'Large Language Models LLMs',image: require('../images/tec.jpeg') },
-  { id: '4', subject: 'Management', image: require('../images/tec.jpeg') },
-];
+
+// let quizData = [
+//   { id: '1', subject: 'Math',  image: require('../images/tec.jpeg') },
+//   { id: '2', subject: 'Science', image: require('../images/tec.jpeg') },
+//   { id: '3', subject: 'Large Language Models LLMs',image: require('../images/tec.jpeg') },
+//   { id: '4', subject: 'Management', image: require('../images/tec.jpeg') },
+// ];
 /*
 const DrawerContent = () => (
   <View style={styles.drawerContent}>
@@ -32,17 +34,38 @@ const DrawerContent = () => (
 */
 
 const InitialScreen = () => {
+  
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState([]);
-
   const [showPopup, setShowPopup] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [isMenuVisible, setMenuVisible] = useState(false);
-
+  const [quizData, setQuizData] = useState([]);
   const navigation = useNavigation();
 
-  const goToExams = () => {
-    navigation.navigate('SubjectsExams');
+  const fetchData = async () => {
+    try {
+      let respu = await Promise.resolve(apisHandles.obtenerAsignaturasUsuario());
+      console.log(respu)
+      const data = respu.map((asignatura) => ({
+        id: asignatura.idAsignatura,
+        subject: asignatura.nombreAsignatura,
+        image: require('../images/tec.jpeg'),
+      }));
+      setQuizData(data);
+      setFilteredData(data);
+    } catch (error) {
+      console.error('Error al obtener las asignaturas del usuario:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const goToExams = (id , subject) => {
+    console.log(id,subject)
+    navigation.navigate('SubjectsExams',{ id, subject });
   };
   const toggleMenu = () => {
     setMenuVisible(!isMenuVisible);
@@ -55,7 +78,7 @@ const InitialScreen = () => {
   useEffect(() => {
     const newFilteredData = quizData.filter(item => item.subject.toLowerCase().includes(searchText.toLowerCase()));
     setFilteredData(newFilteredData);
-  }, [searchText]);
+  }, [searchText, quizData]);
 
   const addSubject = () => {
     if (newSubject.trim() !== '') {
@@ -83,7 +106,7 @@ const InitialScreen = () => {
 
   const renderQuizCard = ({ item }) => (
     <TouchableOpacity style={styles.quizCard}
-    onPress = {goToExams}>
+    onPress = {() => goToExams(item.id, item.subject)}>
       <Image source={item.image} style={styles.quizImage} />
       <Text style={styles.quizText}>{item.subject}</Text>
     </TouchableOpacity>

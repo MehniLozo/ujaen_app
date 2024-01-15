@@ -43,6 +43,14 @@ const crearExamen = async (req, res) => {
       .collection("examenesAsignatura")
       .doc().id;
 
+      let type
+    if (tipoPreguntaExamen.includes("vf")){
+      type = "Verdadero o Falso"
+    }else{
+      type = "Alternativas"
+    }
+
+
     // Agregar el examen a la colección "examenesAsignatura"
     await asignaturaDoc.collection("examenesAsignatura").doc(idExamen).set({
       idExamen,
@@ -51,6 +59,7 @@ const crearExamen = async (req, res) => {
       fecha,
       calificacionExamen,
       estado,
+      tipoPregunta: type,
       // preguntasExamen: [] // Inicializar la colección de preguntas del examen
     });
 

@@ -2,10 +2,12 @@
 
 const PORT =5000;
 
+const IpServer = "[2a0c:5a87:2101:ff00:cf57:8d14:7be0:480]";
+
 const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   /// "nombreAsignatura" tiene que ser un texto y estar escrito en snake_Case
   try {
-    const response = await fetch(`http://127.0.0.1:5000/obtenerEvaluacionesAsignatura/${nombreAsignatura}`)
+    const response = await fetch(`http://${IpServer}:5000/obtenerEvaluacionesAsignatura/${nombreAsignatura}`)
       .then(async (response) => {
         // Verifica si la respuesta es exitosa (código de estado 200-299)
         if (!response.ok) {
@@ -28,7 +30,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
 
   const AddPreguntaExamen = async (nombreAsignatura, nombreExamen, temaPregunta, enunciadoPregunta, tipoPregunta, respuestaCorrecta, curiosidadesPregunta) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/addPreguntaExamen", {
+      const response = await fetch(`http://${IpServer}:5000/addPreguntaExamen`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +47,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
   
   const crearExamen = async (nombreAsignatura, nombreExamen, temaExamen, tipoPreguntaExamen, fecha) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/crearExamen/", {
+      const response = await fetch(`http://${IpServer}:5000/crearExamen/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,18 +64,19 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
 
   const obtenerAsignaturasUsuario = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/obtenerAsignaturasUsuario")
+      const response = await fetch(`http://${IpServer}:5000/obtenerAsignaturasUsuario`)
         .then(async (response) => {
           // Verifica si la respuesta es exitosa (código de estado 200-299)
           if (!response.ok) {
             throw new Error(`Error de red - Código: ${response.status}`);
           }
+          console.log("salida fetch = ", response)
           // Parsea la respuesta JSON
           return await response.json();
         })
         .then((data) => {
           // Maneja los datos obtenidos
-          console.log("Datos recibidos:", data);
+          console.log("Datos recibidos:", data.asignaturas);
           return data.asignaturas;
         });
       // const data = await response.json();
@@ -83,10 +86,29 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
     }
   };
 
+  // const obtenerAsignaturasUsuario = async () => {
+  //   try {
+  //     const response = await fetch(`http://${IpServer}:5000/obtenerAsignaturasUsuario`);
+  
+  //     if (!response.ok) {
+  //       throw new Error(`Error de red - Código: ${response.status}`);
+  //     }
+  
+  //     // Parsea la respuesta JSON
+  //     const data = await response.json();
+  //     console.log("Datos recibidos:", data);
+  
+  //     return data.asignaturas;
+  //   } catch (error) {
+  //     console.error("Error al obtener las asignaturas del usuarioCatch:", error);
+  //   }
+  // };
+
+
   const AgregarAsignatura = async (nombreAsignatura, descripcion, creditos) => {
     let estado = false;
     try {
-      const response = await fetch("http://127.0.0.1:5000/agregarAsignatura/", {
+      const response = await fetch(`http://${IpServer}:5000/agregarAsignatura/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +133,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
     const apodo = "caritosssssss"; 
     
       try {
-        const response = await fetch('http://127.0.0.1:5000/registrar-usuario', {
+        const response = await fetch(`http://${IpServer}:5000/registrar-usuario`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -132,7 +154,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignatura) => {
     //  EN EL FRONT TIENEN QUE FORZAR A QUE NO SE PUEDA INICIAR LA PRUEBA DOS VECES
     //  SE HACE CON UNA BANDERA QUE PROHIBA LA LLAMADA A ESTA FUNCION
   try {
-    const response = await fetch("http://127.0.0.1:5000/iniciarPrueba/", {
+    const response = await fetch(`http://${IpServer}:5000/iniciarPrueba/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -168,7 +190,7 @@ export {apisHandles};
 
   async function EvaluarExamen(idExamen, idAsignatura, evaluacion = false) {
     try {
-      const response = await fetch("http://127.0.0.1:5000/evaluarRespuestaExamen/", {
+      const response = await fetch(`http://${IpServer}:5000/evaluarRespuestaExamen/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -188,7 +210,7 @@ export {apisHandles};
 
 async function EvaluarPregunta(idAsignatura, idExamen, idPregunta, evaluacion){
   try {
-    const respu = await fetch(`http://127.0.0.1:${PORT}/evaluarRespuestaPregunta`, {
+    const respu = await fetch(`http://${IpServer}:${PORT}/evaluarRespuestaPregunta`, {
       method: "POST",
       headers: {"Content-Type": "application/json",},
       body: JSON.stringify({ idAsignatura, idExamen, idPregunta, evaluacion })
@@ -202,7 +224,7 @@ async function EvaluarPregunta(idAsignatura, idExamen, idPregunta, evaluacion){
 
 async function ResponderPregunta(idAsignatura, idExamen, idPregunta, respuesta){
   try {
-    const respu = await fetch(`http://127.0.0.1:${PORT}/almacenarRespuestaPregunta`, {
+    const respu = await fetch(`http://${IpServer}:${PORT}/almacenarRespuestaPregunta`, {
       method: "POST",
       headers: {"Content-Type": "application/json",},
       body: JSON.stringify({ idAsignatura, idExamen, idPregunta, respuesta })
