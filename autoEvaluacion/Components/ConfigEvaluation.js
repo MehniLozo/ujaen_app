@@ -75,7 +75,7 @@ useEffect(( ) => {
       >
     <Picker.Item label="Selecciona un valor" value="" />
           {questionTypes.map((type) => (
-          <Picker.Item key={type} label={type} value={type} />
+          <Picker.Item key={type} label={type} value={type} style = {styles.pickerItem} />
         ))}
       </Picker>
 
@@ -113,6 +113,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  pickerItem:{
+    fontSize:15,
   },
   header:{
     backgroundColor: 'green',
