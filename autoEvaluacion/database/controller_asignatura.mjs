@@ -1,6 +1,6 @@
 import { actualizarIdUsuario, obtenerIdUsuario , variablesReferencias} from "./config.mjs";
 import {BD} from "./firebase.js";
-import { getAsignaturaRef } from "./functions.mjs";
+import { getAsignaturaRef, intercambiarCases } from "./functions.mjs";
 
 const idUserActual = obtenerIdUsuario(); 
 
@@ -9,7 +9,7 @@ const idUserActual = obtenerIdUsuario();
 // Ruta para agregar una asignatura al listado de asignaturasTomadas
 const agregarAsignatura = async (req, res) => {
   try {
-    const idUsuario = idUserActual;
+    const idUsuario = obtenerIdUsuario();
     const { nombreAsignatura, descripcion, creditos } = req.body;
 
     // Obtener la referencia a la colección 'asignaturasTomadas' del usuario
@@ -18,7 +18,6 @@ const agregarAsignatura = async (req, res) => {
       .doc(idUsuario)
       .collection("asignaturasTomadas");
 
-    variablesReferencias.actualizarReferencia("asignaturas" ,asignaturasCollectionRef)
     console.log({ nombreAsignatura, descripcion, creditos });
     // Generar un ID único para la nueva asignatura
     const idAsignatura = asignaturasCollectionRef.doc().id;
@@ -33,10 +32,10 @@ const agregarAsignatura = async (req, res) => {
 
     // Agregar la nueva asignatura a la colección 'asignaturasTomadas'
     await asignaturasCollectionRef.doc(idAsignatura).set(nuevaAsignatura);
-    if(asignaturasCollectionRef) variablesReferencias.actualizarReferencia("asignaturas",asignaturasCollectionRef);
+    
 
     // Enviar una respuesta exitosa al cliente
-    res.json({ success: true, message: "Asignatura agregada con éxito." });
+    res.json({ success: true, message: "Asignatura agregada con éxito." , asignatura: nuevaAsignatura});
   } catch (error) {
     console.error("Error al agregar la asignatura:", error);
     res
@@ -61,9 +60,7 @@ const obtenerAsignaturasUsuario = async (req, res) => {
       .collection("usuarios")
       .doc(idUsuario)
       .collection("asignaturasTomadas");
-    variablesReferencias.actualizarReferencia("asignaturas" ,asignaturasCollectionRef);
-      if(asignaturasCollectionRef) variablesReferencias.actualizarReferencia("asignaturas",asignaturasCollectionRef);
-
+    
     // Obtener los documentos de la colección 'asignaturasTomadas'
     const asignaturasSnapshot = await asignaturasCollectionRef.get();
 
@@ -103,8 +100,10 @@ const obtenerAsignaturasUsuario = async (req, res) => {
 // Ruta GET para obtener todas las evaluaciones de una asignatura
 const obtenerEvaluacionesAsignatura = async (req, res) => {
   try {
-    
-    const  nombreAsignatura  = req.params.nombreAsignatura;
+    console.log("Entrando a buscar los examenes")
+   // Aqui cambiamos el nombre de la asignatura de snake_case a normal 
+    const  nombreAsignatura  = await intercambiarCases(req.params.nombreAsignatura, false);
+    console.log(req.params.nombreAsignatura, nombreAsignatura)
 
     const idUsuario = obtenerIdUsuario();
 
@@ -154,5 +153,36 @@ const obtenerEvaluacionesAsignatura = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
-const controllersAsig = {agregarAsignatura , obtenerAsignaturasUsuario , obtenerEvaluacionesAsignatura , idUserActual};
+
+// Ruta para eliminar un documento y sus subdocumentos
+const eliminarAsignatura = async (req, res) => {
+  const idAsignatura = req.params.idAsignatura;
+const idUsuario = obtenerIdUsuario();
+console.log(idUsuario, idAsignatura)  
+try {
+    
+  const asignaturaDocRef = BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura);
+  const subcoleccionesSnapshot = await asignaturaDocRef.listCollections();
+  console.log(subcoleccionesSnapshot)
+    
+  const promesasEliminarSubcolecciones = subcoleccionesSnapshot.map(async (subcoleccionRef) => {
+      const documentosSubcoleccion = await subcoleccionRef.listDocuments();
+      const promesasEliminarDocumentos = documentosSubcoleccion.map(async (docRef) => {
+        await docRef.delete();
+      });
+      await Promise.all(promesasEliminarDocumentos);
+    });
+
+
+    await Promise.all(promesasEliminarSubcolecciones);
+    await BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura).delete();
+
+    res.status(200).send('Documento y subdocumentos eliminados correctamente.');
+  } catch (error) {
+    console.error('Error al eliminar documento y subdocumentos:', error);
+    res.status(500).send('Error interno del servidor.');
+  }
+};
+
+const controllersAsig = {agregarAsignatura , obtenerAsignaturasUsuario , obtenerEvaluacionesAsignatura , eliminarAsignatura , idUserActual};
 export default controllersAsig;

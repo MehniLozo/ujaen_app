@@ -7,7 +7,6 @@ const serviceAccount = require('./uja-database-firebase-adminsdk-5irti-81b8ca89a
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    // También puedes agregar más configuraciones de Firebase aquí si es necesario
 });
 
 const firestoreDB = admin.firestore();

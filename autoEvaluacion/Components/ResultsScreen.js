@@ -5,22 +5,76 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const backgroundImage = require('../images/tec.jpeg');
 
-const data = [{"id":1,"question":"Cual es el dispositivo mas utilizado","correct": true},
-{"id":2,"question":"Cual es el dispositivo mas utilizado","correct": false}
-];
-const ResultsScreen = ({route}) => {
-  const {achieved=5,numQuestions=10} = route
-return (
+const ResultsScreen = ({ route }) => {
+  const { achieved = 5, numQuestions = 10 } = route;  // Agrega newData a las props
+
+  const { idAsignatura , idExamen , preguntasExamen , score} = route.params;
+console.log({ idAsignatura , idExamen , preguntasExamen , score});
+  const [data, setData] = useState([
+    { "id": 1, "question": "Cual es el dispositivo mas utilizado", "correct": true },
+    { "id": 2, "question": "Cual es el dispositivo mas utilizado", "correct": false }
+  ]);
+
+  // let totalCorrectas = 0;
+  // let cantPreguntas = 0;
+let [totalCorrectas, setTotalCorrectasotalCorrectas] = useState(0);
+let [cantPreguntas, setCantPreguntas] = useState(0);
+
+  // Agrega esta función para actualizar data con nuevos datos
+  const updateData = (newData) => {
+    console.log(newData);
+      // Variable para acumular la cantidad de calificaciones correctas
+  
+    const updatedData = newData.map(item => {
+      // Verifica si la calificación es mayor a 1 y actualiza la variable totalCorrectas
+      if (item.calificacionPregunta > 1) {
+        totalCorrectas += 1;
+      }
+      
+      cantPreguntas += 1;
+      return {
+        id: item.idPregunta,
+        question: item.enunciadoPregunta,
+        calificacionPregunta: item.calificacionPregunta,
+        justificacion: item.justificacion,
+        respuestaAlmacenada: item.respuestaAlmacenada,
+        cuerpoPregunta: item.cuerpoPregunta,
+        tipoPregunta: item.tipoPregunta,
+      };
+    });
+    console.log(cantPreguntas , totalCorrectas)
+    setData(updatedData);
+    // setCantPreguntas(cantPreguntas);
+    // setTotalCorrectas(totalCorrectas);
+  }
+
+
+  // Llama a updateData cuando recibas nuevos datos
+  useEffect(() => {
+    if (preguntasExamen) {
+      updateData(preguntasExamen);
+    }
+  }, [preguntasExamen]);
+
+  useEffect(() => {
+    setCantPreguntas(cantPreguntas)
+    setTotalCorrectasotalCorrectas(totalCorrectas)
+  }, [data])
+
+  
+  console.log(cantPreguntas,totalCorrectas)
+
+  return (
     <View style={styles.passedQuestionSection}>
 
      <View style={styles.header}>
         <Text style = {styles.headerText}>
-            Tu calificaccion es 
+            Tu calificaccion es {score}
         </Text>
         <Text style={styles.score}>
-            {achieved}/{numQuestions}
+            {totalCorrectas}/{cantPreguntas}
         </Text>
-        {achieved >= numQuestions / 2 && <Text style = {styles.headerText}>
+        {totalCorrectas > cantPreguntas / 2 && <Text style = {styles.headerText}>
             Enhorabuena!!
         </Text>}
       </View>
@@ -32,25 +86,25 @@ return (
         renderItem={({ item }) => (
           <View style={styles.passedQuestionItem}>
             <View style = {styles.questionDetail}>
-            <Text>Preguna {item.id}</Text>
+            <Text>({item.id})</Text>
             <Text style = {styles.question}>{item.question}</Text>
             </View>
             <View style={styles.check}>
-              {item.correct?  <Icon name="check" size={30} color="green" /> : 
-              <Icon name="times" size={30} color="red" />}
+              {item.calificacionPregunta == 2 ?  <Icon name="check" size={30} color="green" /> : (item.calificacionPregunta == -2 ? <Icon name="times" size={30} color="red" /> : <Icon name="question" size={30} color="gray" />)
+              }
             </View>
           </View>
         )}
         keyExtractor={(item) => item.id}
       />
           <View style={styles.floatingContainer}>
-      <TouchableOpacity style={styles.shareButton}>
+      {/* <TouchableOpacity style={styles.shareButton}>
         <Icon name="share-alt" size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
      <View>
-        <TouchableOpacity style={styles.rectangularButton}>
+        {/* <TouchableOpacity style={styles.rectangularButton}>
             <Text style={styles.buttonText}>Ver tabla de puntaje</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         
         <TouchableOpacity style={styles.rectangularButton}>
             <Text style={styles.buttonText}>Ir inicio</Text>
