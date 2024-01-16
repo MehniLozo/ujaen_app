@@ -138,9 +138,9 @@ const crearExamen = async (req, res) => {
       .get();
 
       const Examen = asignaturasSnapshot2.data();
-
+      console.log(asignaturasSnapshot2,Examen)
     // Respuesta exitosa
-    res.status(200).json({ mensaje: "Examen creado exitosamente" , Examen});
+    res.status(200).json({ mensaje: "Examen creado exitosamente, con id: " , idExamen});
   } catch (error) {
     console.error("Error al crear el examen:", error);
     res.status(500).json({ mensaje: "Error interno del servidor" });

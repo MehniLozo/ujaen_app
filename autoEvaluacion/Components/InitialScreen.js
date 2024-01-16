@@ -33,6 +33,9 @@ const DrawerContent = () => (
 );
 */
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const InitialScreen = () => {
   
   const [searchText, setSearchText] = useState('');
@@ -40,13 +43,15 @@ const InitialScreen = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [isMenuVisible, setMenuVisible] = useState(false);
-  const [quizData, setQuizData] = useState([]);
+  let [quizData, setQuizData] = useState([]);
   const navigation = useNavigation();
   const { width, height } = Dimensions.get('window');
 
   // Calcula el tamaño del icono proporcionalmente al ancho de la pantalla
   const iconSize = width * 0.1;
   const iconSizeB = width * 0.05;
+
+  
   const fetchData = async () => {
     try {
       let respu = await Promise.resolve(apisHandles.obtenerAsignaturasUsuario());
@@ -84,14 +89,37 @@ const InitialScreen = () => {
     setFilteredData(newFilteredData);
   }, [searchText, quizData]);
 
-  const addSubject = () => {
+
+  const fetchData2 = async (name) => {
+    try {
+      let respuesta = await Promise.resolve(apisHandles.AgregarAsignatura( name ));
+      console.log(respuesta)
+      // Verifica si la respuesta tiene éxito
+    if (respuesta && respuesta.success) {
+      console.log('Asignatura agregada con éxito');
+      console.log('ID de la asignatura:', respuesta.asignatura.idAsignatura);
+      return respuesta.asignatura;
+    }else{
+      console.log(`Error al crear la asignatura ${name}`)
+    }
+    } catch (error) {
+      console.log("Error en FetchData 2");
+    }
+  }
+
+
+  const addSubject = async () => {
     if (newSubject.trim() !== '') {
-
-      quizData = [...quizData, { id: (quizData.length + 1).toString(), subject: newSubject, image: require('../images/tec.jpeg')}];
-      setNewSubject('');
-      setShowPopup(false);
-
-      setFilteredData(quizData.filter(item => item.subject.toLowerCase().includes(searchText.toLowerCase())));
+      const resultado = await fetchData2(newSubject);
+      if (resultado){
+        console.log(resultado)
+        quizData = [...quizData, { id: resultado.idAsignatura, subject: resultado.nombreAsignatura, image: require('../images/tec.jpeg')}];
+        setShowPopup(false);
+        setFilteredData(quizData);
+        setQuizData(quizData);
+        
+        
+    }
     }
   };
 
@@ -107,24 +135,69 @@ const InitialScreen = () => {
     setSelectedThemeId(themeId);
   };
 
+  useEffect(() => {
+    const rotationInterval = setInterval(() => {
+      // Cada 10 segundos, incrementa la rotación en 45 grados
+      setRotation((prevRotation) => prevRotation + 45);
+    }, 2000);
+
+    return () => {
+      // Limpia el intervalo al desmontar el componente
+      clearInterval(rotationInterval);
+    };
+  }, []);
+
+
+  const EliminarAsignatura = async (asignatura) => {
+    try{
+    // console.log("Eliminando la asignatura: ", asignatura.subject);
+    await apisHandles.EliminarAsignatura(asignatura.id)
+    console.log(22222222);
+        quizData = quizData.filter(objeto => objeto.id !== asignatura.id);  
+        console.log(quizData)
+        setFilteredData(quizData);
+        setQuizData(quizData);
+    
+  }
+  catch (error){
+    console.log("Error en el fetch eliminar asignaura en front")
+  }
+  }
 
   const renderQuizCard = ({ item }) => (
-    <TouchableOpacity style={styles.quizCard}
-    onPress = {() => goToExams(item.id, item.subject)}>
+    <TouchableOpacity
+      style={styles.quizCard}
+      onPress={() => goToExams(item.id, item.subject)}
+    >
       <Image source={item.image} style={styles.quizImage} />
-      <Text style={styles.quizText}>{item.subject}</Text>
+      <View style={styles.container}>
+        <Text style={styles.quizText}>{item.subject}</Text>
+        <TouchableOpacity
+          style={styles.check}
+          onPress={() => {
+            EliminarAsignatura(item);
+          }}
+        >
+          <Icon name="times" size={20} color="red" />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
   );
+
+  const [rotation, setRotation] = useState(0);
+
+
+
 
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity  onPress={toggleMenu}>
-        <Icon name="bars" size={iconSizeB} color="#888" />
+        <TouchableOpacity style={styles.icon} onPress={toggleMenu}>
+        <Icon name="bars" size={30} color="#888" /> 
         </TouchableOpacity>
         <TouchableOpacity style={styles.profileIcon} onPress={() => console.log('Profile icon clicked')}>
           <Text style={styles.greetingText}>Hola Aziz!</Text>
-          <Icon name="user" size={iconSize} color="#888" />
+          <Icon name="user" size={30} color="#888" />
         </TouchableOpacity>
       </View>
 
@@ -142,7 +215,7 @@ const InitialScreen = () => {
         <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Buscar..."
+          placeholder="Search..."
           onChangeText={(text) => setSearchText(text)}
         />
       </View>
@@ -154,12 +227,14 @@ const InitialScreen = () => {
         style={styles.cardContainer}
       />
 
-      <TouchableOpacity style={styles.floatingButton} onPress={() => setShowPopup(true)}>
-        {/*<Text style={styles.buttonText}>+</Text>*/}
-         <Icon name="pencil" size={20} color="white" backgroundColor="#006D38"/>
+      <TouchableOpacity
+        style={[styles.floatingButton, { transform: [{ rotate: `${rotation}deg` }] }]}
+        onPress={() => setShowPopup(true)}
+      >
+        <Icon name="pencil" size={20} color="white" backgroundColor="green" />
       </TouchableOpacity>
 
-     <Modal animationType="slide" transparent={true} visible={showPopup}>
+      <Modal animationType="slide" transparent={true} visible={showPopup}>
         <View style={styles.popup}>
           <TextInput
             style={styles.popupInput}
@@ -198,7 +273,7 @@ const styles = StyleSheet.create({
     height: 60, 
   },
   icon: {
-    padding: 10,
+    padding: 0,
   },
   profileIcon:{
     flexDirection: 'row', 
@@ -253,9 +328,9 @@ const styles = StyleSheet.create({
 
     floatingButton: {
     color:"green",
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
+    position: 'fixed',
+    bottom: 100,
+    left: 40,
     backgroundColor: '#006D38',
     borderRadius: 30,
     width: 60,
@@ -264,7 +339,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 5,
   },
-
+    check: {
+    alignItems: 'flex-end',
+    position: "absolute",
+    right: 10,
+    top: 10,
+  },
     buttonText: {
     color: '#fff',
     fontSize: 24,
@@ -305,5 +385,4 @@ const styles = StyleSheet.create({
     width: '80%',
   },
 });
-
 export default InitialScreen;

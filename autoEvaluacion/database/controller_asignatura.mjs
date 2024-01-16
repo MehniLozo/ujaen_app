@@ -35,7 +35,7 @@ const agregarAsignatura = async (req, res) => {
     
 
     // Enviar una respuesta exitosa al cliente
-    res.json({ success: true, message: "Asignatura agregada con éxito." });
+    res.json({ success: true, message: "Asignatura agregada con éxito." , asignatura: nuevaAsignatura});
   } catch (error) {
     console.error("Error al agregar la asignatura:", error);
     res
@@ -153,5 +153,36 @@ const obtenerEvaluacionesAsignatura = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
-const controllersAsig = {agregarAsignatura , obtenerAsignaturasUsuario , obtenerEvaluacionesAsignatura , idUserActual};
+
+// Ruta para eliminar un documento y sus subdocumentos
+const eliminarAsignatura = async (req, res) => {
+  const idAsignatura = req.params.idAsignatura;
+const idUsuario = obtenerIdUsuario();
+console.log(idUsuario, idAsignatura)  
+try {
+    
+  const asignaturaDocRef = BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura);
+  const subcoleccionesSnapshot = await asignaturaDocRef.listCollections();
+  console.log(subcoleccionesSnapshot)
+    
+  const promesasEliminarSubcolecciones = subcoleccionesSnapshot.map(async (subcoleccionRef) => {
+      const documentosSubcoleccion = await subcoleccionRef.listDocuments();
+      const promesasEliminarDocumentos = documentosSubcoleccion.map(async (docRef) => {
+        await docRef.delete();
+      });
+      await Promise.all(promesasEliminarDocumentos);
+    });
+
+
+    await Promise.all(promesasEliminarSubcolecciones);
+    await BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura).delete();
+
+    res.status(200).send('Documento y subdocumentos eliminados correctamente.');
+  } catch (error) {
+    console.error('Error al eliminar documento y subdocumentos:', error);
+    res.status(500).send('Error interno del servidor.');
+  }
+};
+
+const controllersAsig = {agregarAsignatura , obtenerAsignaturasUsuario , obtenerEvaluacionesAsignatura , eliminarAsignatura , idUserActual};
 export default controllersAsig;

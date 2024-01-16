@@ -139,6 +139,56 @@ const evaluarRespuestaPregunta = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
+
+// Ruta para obtener las preguntas de un examen
+const obtenerPreguntasExamen = async (req, res) => {
+  try {
+    
+    const idUsuario = obtenerIdUsuario();
+    const idAsignatura = req.params.idAsignatura; 
+      const idExamen = req.params.idExamen;
+      
+    if(BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura).collection("examenesAsignatura").doc(idExamen).size){
+      return res.json({message: "El examen no existe"});
+    }
+
+    // Obtener la colección 'asignaturasTomadas' del usuario
+    const preguntasCollectionRef = BD.firestoreDB
+      .collection("usuarios")
+      .doc(idUsuario)
+      .collection("asignaturasTomadas").doc(idAsignatura).collection("examenesAsignatura");
+    
+    // Obtener los documentos de la colección 'preguntasTomadas'
+    const preguntasSnapshot = await preguntasCollectionRef.get();
+
+    // Crear una lista de preguntas a partir de los documentos
+    const preguntasList = [];
+    preguntasSnapshot.forEach((preguntaDoc) => {
+      // Obtener los atributos de la asignatura del documento
+      const { idPregunta, enunciadoPregunta, calificacionPregunta, tipoPreguntaExamen, respuestaAlmacenada, cuerpoPregunta, justificacion } = preguntaDoc.data();
+
+      // Crear un objeto de asignatura y agregarlo a la lista
+      const pregunta = { idPregunta, enunciadoPregunta, calificacionPregunta, tipoPreguntaExamen, respuestaAlmacenada, cuerpoPregunta, justificacion };
+      preguntasList.push(pregunta);
+    });
+
+    // Enviar la lista de asignaturas al cliente
+    res.json({ success: true, preguntas: preguntasList });
+  } catch (error) {
+    console.error("Error al obtener las preguntas del examen:", error);
+    if(error.message == "El examen no existe"){
+      res.status(500).json({
+        success: false,
+        error: "error.message",}
+      )
+    }else{
+      res.status(500).json({
+        success: false,
+        error: "Error al obtener las preguntas del examen.",}
+      )};
+  }
+};
+
 // export default addPreguntaExamen
-const controllersPreg= {addPreguntaExamen , almacenarRespuestaPregunta , evaluarRespuestaPregunta};
+const controllersPreg= {addPreguntaExamen , almacenarRespuestaPregunta , evaluarRespuestaPregunta, obtenerPreguntasExamen};
 export default controllersPreg;

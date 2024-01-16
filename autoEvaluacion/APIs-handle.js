@@ -10,7 +10,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignaturaParam) => {
   
   /// "nombreAsignatura" tiene que ser un texto y estar escrito en snake_Case
   /// para eso es la funcion de apbajo intercambiarCases
-  const nombreAsignatura = await intercambiarCases(nombreAsignaturaParam, true);
+  const nombreAsignatura = await intercambiarCases(nombreAsignaturaParam, false);
   console.log(nombreAsignaturaParam,nombreAsignatura)
   try {
           
@@ -61,7 +61,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignaturaParam) => {
   //	OJO SI NO ESPECIFICA "cantidadPreguntas" SE CREARAN 5 NADA MAS QUE ERAN LAS PREVISTAS
   
   //	OJO TipoPreguntaExamen DEBE SER UNA CADENA "vf" o "alternativas"
-  const crearExamen = async (nombreAsignatura, nombreExamen, temaExamen, tipoPreguntaExamen, fecha, cantidadPreguntas) => {
+  const crearExamen = async (nombreAsignatura, nombreExamen, temaExamen, tipoPreguntaExamen, cantidadPreguntas, fecha) => {
     
 	try {
       const response = await fetch(`http://${IpServer}:${PORT}/crearExamen/`, {
@@ -74,7 +74,7 @@ const ObtenerExamenesAsignatura = async (nombreAsignaturaParam) => {
       const data = await response.json();
 
       console.log("Respuesta del servidor:", data);
-      return data
+      return data.idExamen
     } catch (error) {
       console.error("Error al crear Examen:", error);
     }
@@ -107,8 +107,33 @@ const obtenerAsignaturasUsuario = async () => {
     }
   };
 
+  const obtenerPreguntasExamen = async (idAsignatura, idExamen) => {
+    try {
+      const params = {idAsignatura,idExamen};
+      const response = await fetch(`http://${IpServer}:${PORT}/obtenerPreguntasExamen/${idAsignatura}/${idExamen}`)
+        .then(async (response) => {
+          // Verifica si la respuesta es exitosa (código de estado 200-299)
+          if (!response.ok) {
+            throw new Error(`Error de red - Código: ${response.status}`);
+          }
+          console.log("salida fetch = ", response)
+          // Parsea la respuesta JSON
+          return await response.json();
+        })
+        .then((data) => {
+          // Maneja los datos obtenidos
+          console.log("Datos recibidos:", data.asignaturas);
+          return data.preguntas;
+        });
+      // const data = await response.json();
+      console.log("response = ",response);
+      return response
+    } catch (error) {
+      console.error("Error al obtener las preguntas del usuarioCatch:", error);
+    }
+  };
 
-  const AgregarAsignatura = async (nombreAsignatura, descripcion, creditos) => {
+  const AgregarAsignatura = async (nombreAsignatura, descripcion = '', creditos = 50) => {
     // let estado = false;
     try {
       const response = await fetch(`http://${IpServer}:${PORT}/agregarAsignatura/`, {
@@ -232,6 +257,34 @@ async function ResponderPregunta(idAsignatura, idExamen, idPregunta, respuesta){
   }
 }
 
+async function EliminarAsignatura(idAsignatura){
+ try{
+  // Configura la solicitud DELETE
+  const opcionesSolicitud = {
+    method: "DELETE",
+  };
+
+  // Realiza la solicitud fetch
+  const respuesta = await fetch(`http://${IpServer}:${PORT}/eliminarAsignatura/${idAsignatura}`,opcionesSolicitud)
+    .then((respuesta) => {
+      if (!respuesta.ok) {
+        throw new Error(
+          `Error en la solicitud: ${respuesta.status} ${respuesta.statusText}`
+        );
+      }
+      return respuesta;
+    })
+    .then((datos) => {
+      console.log("Éxito:", datos);
+    })
+    .catch((error) => {
+      console.error("Error al realizar la solicitud:", error);
+    });
+  }catch (error){
+    console.log("Error desde Api eliminar asignatura")
+  }
+    // return respuesta;
+};
   
 const apisHandles = {
 	ObtenerExamenesAsignatura,
@@ -244,6 +297,8 @@ const apisHandles = {
   EvaluarExamen,
   EvaluarPregunta,
   ResponderPregunta,
+  EliminarAsignatura,
+  obtenerPreguntasExamen,
 };
 export {apisHandles};
 

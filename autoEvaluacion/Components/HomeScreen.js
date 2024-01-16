@@ -14,6 +14,9 @@ const HomeScreen = () => {
     navigation.navigate('SingIn');
   };
 
+  const goToSignUp = () => {
+    navigation.navigate('Subjects');
+  };
   
   return (
     
@@ -28,7 +31,7 @@ const HomeScreen = () => {
         <Text style={styles.title}>Bienvenido a la aplicación</Text>
         <Text style={styles.title}>De evaluacion</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={() =>{}}>
+      <TouchableOpacity style={styles.button} onPress={goToSignUp}>
         <Text style={styles.buttonText}>Registrarme</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.buttony} onPress={goToSignIn}> 

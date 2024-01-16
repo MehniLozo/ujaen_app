@@ -1,23 +1,64 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet,TouchableOpacity } from 'react-native';
+import React, { useState , useEffect} from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator  } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { apisHandles } from '../APIs-handle';
 
-const EvaluationConfigScreen = () => {
+const EvaluationConfigScreen = ({route}) => {
   const navigation = useNavigation();
 
-  const question =  "Cual es el dispositivo mas utilizando?"
+
+
+const {idAsignatura , nombreAsignatura} = route.params;
+
+console.log({idAsignatura , nombreAsignatura});
+
+const [loading, setLoading] = useState(false);
+  const question =  "Cual es el dispositivo mas utilizando?";
   
   const goToQuest = () => {
     navigation.navigate('Question', {options:null,question,typeQuest: 1, currentQuestion:1,totalQuestions:10,hasNext:true,hasPrec:false});
   };
-
+useEffect(( ) => {
+  setQuestionType('')
+},[])
+ 
   const [evaluationName, setEvaluationName] = useState('');
-  const [questionType, setQuestionType] = useState('opcionMultiple');
+  const [questionType, setQuestionType] = useState('alternativa');
   const [numberOfQuestions, setNumberOfQuestions] = useState('');
+  const [theme, setTheme] = useState('');
+  const questionTypes = ['Alternativas', 'Verdadero o falso'];
 
-  const questionTypes = ['opcionMultiple', 'verdaderoFalso', 'abierta', 'mixta'];
+  const handleStartEvaluation =async  () => {
+    try{
+      setLoading(true);
+      const currentDate = new Date();
 
+     /* let resp = await Promise.resolve(apisHandles.crearExamen({
+        nombreAsignatura:"programación",
+        nombreExamen:evaluationName,
+        temaExamen: theme,
+        tipoPreguntaExamen: questionType}));*/
+        if((evaluationName !== '') && (theme !== '')){
+      let resp = await Promise.resolve(apisHandles.crearExamen(
+        nombreAsignatura,
+        evaluationName,
+         theme,
+         questionType,
+         numberOfQuestions,
+         ));
+        
+      let coleccionPreguntas = await apisHandles.obtenerPreguntasExamen(idAsignatura, resp);
+      console.log(coleccionPreguntas)
+      console.log("Respuesta de crear examen interfaz: ", resp);
+      if(resp) goToQuest()
+      setLoading(false);
+    }
+    }catch(error) {
+      console.error(error)
+      setLoading(false);
+    }
+  }
   return (
     <View style={styles.container}>
      <TextInput
@@ -29,10 +70,11 @@ const EvaluationConfigScreen = () => {
     <Text>Tipo de preguntas</Text>
       <Picker
         selectedValue={questionType}
-        onValueChange={(itemValue) => setQuestionType(itemValue)}
+        onValueChange={(itemValue) => { console.log(itemValue); setQuestionType((itemValue == 'Verdadero o falso') ? ('vf') : ('alternativa') )}}
         style={styles.picker}
       >
-        {questionTypes.map((type) => (
+    <Picker.Item label="Selecciona un valor" value="" />
+          {questionTypes.map((type) => (
           <Picker.Item key={type} label={type} value={type} />
         ))}
       </Picker>
@@ -42,11 +84,22 @@ const EvaluationConfigScreen = () => {
         placeholder="Cantidad de preguntas"
         keyboardType="numeric"
         value={numberOfQuestions}
-        onChangeText={(text) => setNumberOfQuestions(text)}
+        onChangeText={(text) => setNumberOfQuestions(parseInt(text, 10))}
       />
-      <TouchableOpacity style={styles.startButton} onPress = {goToQuest} >
+      <TextInput
+        style={styles.input}
+        placeholder ={`¿Qué tema de la asignatura ${nombreAsignatura} abordarás en la prueba?`}
+        value={theme}
+        onChangeText={(text) => setTheme(text)}
+      />
+      {loading ? (
+        // Muestra un indicador de carga mientras la función se está ejecutando
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+      <TouchableOpacity style={styles.startButton} onPress = {handleStartEvaluation} >
         <Text style={styles.startButtonText}>Iniciar autoevaluación</Text>
       </TouchableOpacity>
+      )}
     </View>
   );
 };

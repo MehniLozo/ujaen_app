@@ -15,8 +15,10 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
     { "id": 2, "question": "Cual es el dispositivo mas utilizado", "correct": false }
   ]);
 
-  const [totalCorrectas, setTotalCorrectas]= useState(0)
-  const [cantPreguntas, setCantPreguntas]= useState(0)
+  // let totalCorrectas = 0;
+  // let cantPreguntas = 0;
+let [totalCorrectas, setTotalCorrectasotalCorrectas] = useState(0);
+let [cantPreguntas, setCantPreguntas] = useState(0);
 
   // Agrega esta función para actualizar data con nuevos datos
   const updateData = (newData) => {
@@ -26,14 +28,14 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
     const updatedData = newData.map(item => {
       // Verifica si la calificación es mayor a 1 y actualiza la variable totalCorrectas
       if (item.calificacionPregunta > 1) {
-        setTotalCorrectas(prevTotal => prevTotal + 1);
+        totalCorrectas += 1;
       }
-      // Actualiza el estado de la cantidad total de preguntas
-      setCantPreguntas(prevCant => prevCant + 1);
+      
+      cantPreguntas += 1;
       return {
         id: item.idPregunta,
         question: item.enunciadoPregunta,
-        correct: (item.calificacionPregunta > 1),
+        calificacionPregunta: item.calificacionPregunta,
         justificacion: item.justificacion,
         respuestaAlmacenada: item.respuestaAlmacenada,
         cuerpoPregunta: item.cuerpoPregunta,
@@ -42,8 +44,8 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
     });
     console.log(cantPreguntas , totalCorrectas)
     setData(updatedData);
-    setCantPreguntas(cantPreguntas);
-    setTotalCorrectas(totalCorrectas);
+    // setCantPreguntas(cantPreguntas);
+    // setTotalCorrectas(totalCorrectas);
   }
 
 
@@ -53,7 +55,14 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
       updateData(preguntasExamen);
     }
   }, [preguntasExamen]);
+
+  useEffect(() => {
+    setCantPreguntas(cantPreguntas)
+    setTotalCorrectasotalCorrectas(totalCorrectas)
+  }, [data])
+
   
+  console.log(cantPreguntas,totalCorrectas)
 
   return (
     <View style={styles.passedQuestionSection}>
@@ -65,7 +74,7 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
         <Text style={styles.score}>
             {totalCorrectas}/{cantPreguntas}
         </Text>
-        {totalCorrectas >= cantPreguntas / 2 && <Text style = {styles.headerText}>
+        {totalCorrectas > cantPreguntas / 2 && <Text style = {styles.headerText}>
             Enhorabuena!!
         </Text>}
       </View>
@@ -81,21 +90,21 @@ console.log({ idAsignatura , idExamen , preguntasExamen , score});
             <Text style = {styles.question}>{item.question}</Text>
             </View>
             <View style={styles.check}>
-              {item.correct?  <Icon name="check" size={30} color="green" /> : 
-              <Icon name="times" size={30} color="red" />}
+              {item.calificacionPregunta == 2 ?  <Icon name="check" size={30} color="green" /> : (item.calificacionPregunta == -2 ? <Icon name="times" size={30} color="red" /> : <Icon name="question" size={30} color="gray" />)
+              }
             </View>
           </View>
         )}
         keyExtractor={(item) => item.id}
       />
           <View style={styles.floatingContainer}>
-      <TouchableOpacity style={styles.shareButton}>
+      {/* <TouchableOpacity style={styles.shareButton}>
         <Icon name="share-alt" size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
      <View>
-        <TouchableOpacity style={styles.rectangularButton}>
+        {/* <TouchableOpacity style={styles.rectangularButton}>
             <Text style={styles.buttonText}>Ver tabla de puntaje</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         
         <TouchableOpacity style={styles.rectangularButton}>
             <Text style={styles.buttonText}>Ir inicio</Text>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, FlatList, StyleSheet, Animated, ImageBackground } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { apisHandles } from '../APIs-handle';
@@ -50,12 +50,12 @@ const SubjectExamsScreen = ({ route }) => {     //  NEW
   //  ESTA PUEDE SER UNA VENTANA PARA RESOLVER LA PRUEBA
   const goToResolve = (idExamen, preguntasExamen, score) => {
     //  ELEGIR LOS ATRIBUTOS QUE DESEA PASARLE A LA SIGUIENTE VENTANA (COMPONENTE) QUE DEBE SER DE RESOLVER PREGUNTAS DEL EXAMEN  SIN HACER
-    navigation.navigate('Results', { idAsignatura , idExamen , preguntasExamen } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
+    navigation.navigate('Test', { nombreAsignatura, idAsignatura } );   //  SUSTITUIR THEMES POR LA VENTANA QUE CORRESPONDA A PREGUNTAS
   };
 
 
   const goToThemes = () => {
-    navigation.navigate('Themes');
+    navigation.navigate('ConfigEvaluation', { nombreAsignatura, idAsignatura });
   };
 
   // let passedExamsData = [
@@ -79,6 +79,24 @@ const SubjectExamsScreen = ({ route }) => {     //  NEW
       setFilteredExams(passedExamsData); 
     }
   }, [selectedFilter , passedExamsData]);
+
+  const animatedValue = useRef(new Animated.Value(1)).current;
+
+  const startAnimation = () => {
+    Animated.sequence([
+      Animated.timing(animatedValue, { toValue: 1.2, duration: 300, useNativeDriver: true, }),
+      Animated.timing(animatedValue, { toValue: 1, duration: 300, useNativeDriver: true,}),
+    ]).start();
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      startAnimation();
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
 
 return (
   <View style={styles.passedExamsSection}>
@@ -132,9 +150,15 @@ return (
       )}
       keyExtractor={(item) => item.id}
     />
-    <TouchableOpacity style={styles.floatingButton} onPress={goToThemes}>
-      <Text style={styles.buttonText}>+</Text>
-    </TouchableOpacity>
+    <TouchableOpacity
+        style={{
+          ...styles.floatingButton,
+          transform: [{ scale: animatedValue }],
+        }}
+        onPress={goToThemes}
+      >
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
   </View>
 );
 };
