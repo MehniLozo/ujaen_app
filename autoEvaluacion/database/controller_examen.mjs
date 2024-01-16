@@ -1,7 +1,7 @@
 import {BD} from "./firebase.js";
 import { PORT, obtenerIdUsuario } from "./config.mjs";
 import functions, { evaluarRespuestaPregunta } from "./functions.mjs";
-// import { EvaluarPregunta } from "../APIs-handle.js";
+// import { EvaluarExamen } from "../APIs-handle.js";
 const idUserActual = obtenerIdUsuario(); 
 
 // Ruta POST para crear un examen
@@ -17,10 +17,11 @@ const crearExamen = async (req, res) => {
       tipoPreguntaExamen,
       calificacionExamen,
     } = req.body;
-    const idUsuario = idUserActual;
+    const idUsuario = obtenerIdUsuario();
     calificacionExamen = req.body.calificacionExamen || 0; // Valor predeterminado
     const fecha = functions.obtenerHoraActualFormateada() || "6/03/2016";
     const estado = "Creada";
+    const cantPreguntas = req.body.cantPreguntas || 5;
 
     // Obtener todos los documentos de la colección 'Asignatura'
     const asignaturasSnapshot = await BD.firestoreDB
@@ -43,14 +44,6 @@ const crearExamen = async (req, res) => {
       .collection("examenesAsignatura")
       .doc().id;
 
-      let type
-    if (tipoPreguntaExamen.includes("vf")){
-      type = "Verdadero o Falso"
-    }else{
-      type = "Alternativas"
-    }
-
-
     // Agregar el examen a la colección "examenesAsignatura"
     await asignaturaDoc.collection("examenesAsignatura").doc(idExamen).set({
       idExamen,
@@ -59,7 +52,6 @@ const crearExamen = async (req, res) => {
       fecha,
       calificacionExamen,
       estado,
-      tipoPregunta: type,
       // preguntasExamen: [] // Inicializar la colección de preguntas del examen
     });
 
@@ -71,8 +63,8 @@ const crearExamen = async (req, res) => {
         const { generarPregunta } = openaiModule;
         
         let i = 0;
-        while (i < 5) {
-          console.log(`Intentando crear la pregunta numero ${i+1} de tipo ${tipoPreguntaExamen} con api de openai`)
+        while (i < cantPreguntas) {
+          console.log(`Intentando crear la pregunta número ${i+1} de tipo ${tipoPreguntaExamen} con api de openai`)
           let resultadoGeneracionAI = await generarPregunta(
             temaExamen,
             nombreAsignatura,
@@ -137,8 +129,18 @@ const crearExamen = async (req, res) => {
         console.error("Error al importar el módulo openai.mjs:", error);
       });
 
+      //  obtenemos la estructura del examen para devolverla
+      const asignaturasSnapshot2 = await BD.firestoreDB
+      .collection("usuarios")
+      .doc(idUsuario)
+      .collection("asignaturasTomadas")
+      .doc(idExamen)
+      .get();
+
+      const Examen = asignaturasSnapshot2.data();
+
     // Respuesta exitosa
-    res.status(200).json({ mensaje: "Examen creado exitosamente" });
+    res.status(200).json({ mensaje: "Examen creado exitosamente" , Examen});
   } catch (error) {
     console.error("Error al crear el examen:", error);
     res.status(500).json({ mensaje: "Error interno del servidor" });
@@ -157,7 +159,7 @@ const evaluarRespuestaExamen = async (req, res) => {
     const asignaturaRef = BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas");
     const examenesRef = BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura).collection("examenesAsignatura");
     const preguntasExamenRef = BD.firestoreDB.collection("usuarios").doc(idUsuario).collection("asignaturasTomadas").doc(idAsignatura).collection("examenesAsignatura").doc(idExamen).collection("preguntasExamen");
-
+    //  evaluarRespuestaPregunta(idAsignatura , idExamen , idPregunta );
     const examenColeccionSnapshot = await examenesRef.doc(idExamen)
       .collection("preguntasExamen")
       .get();
@@ -167,81 +169,81 @@ const evaluarRespuestaExamen = async (req, res) => {
     //   return res.json({message: "No tiene las 5 preguntas esperadas este examen."});
     // }
 
-    if (!req.body.evaluacion) {
-      
-      preguntasExamenRef
-        .get()
-        .then(async(querySnapshot) => {//  TODAS LAS PREGUNTAS DEL EXAMEN
-          let totalCalificaciones = 0;
-          let cantidadPreguntas = 0;
+    let sumaCalificaciones = 0;
+    const querySnapshot = await preguntasExamenRef.get();
 
-console.log("SE OBTUVIERON LISTADO PREGUNTAS DE EXAMEN");
+    // Iterar sobre los documentos de preguntasExamen con un bucle for...of
+    for (const doc of querySnapshot.docs) {
 
-const evaluacionesPromesas = [];
+      const idPregunta = doc.data().idPregunta;
 
-querySnapshot.forEach((doc) => {
-  console.log("BUSCANDO CALIFICACION EN PREGUNTA");
-  const idPregunta = doc.data().idPregunta;
-  // Agrega la promesa devuelta por evaluarRespuestaPregunta al array
-  evaluacionesPromesas.push(evaluarRespuestaPregunta(idAsignatura, idExamen, idPregunta)
-    .then(() => {
-      const calificacion = doc.data().calificacionPregunta;
-      totalCalificaciones += calificacion;
-      cantidadPreguntas++;
-    })
-    .catch((error) => {
-      console.error('Error al evaluar respuesta de pregunta:', error);
-    }));
-});
+      // Hacer un fetch POST a otra ruta para establecer el valor de "calificacionPregunta"
+      await evaluarRespuestaPregunta(idAsignatura , idExamen , idPregunta );
 
-// Espera a que todas las promesas se resuelvan antes de continuar
-Promise.all(evaluacionesPromesas)
-  .then(() => {
-    console.log("SE TERMINO DE BUSCAR CALIFICACIONES, AHORA TOCA PROMEDIO");
-    console.log({ totalCalificaciones, cantidadPreguntas });
+      // Obtener la calificación de cada pregunta después de la actualización
+      const calificacionPregunta = doc.data().calificacionPregunta;
 
-    if (cantidadPreguntas) {
-      // Calcular el promedio
-      const promedioCalificaciones =
-        totalCalificaciones / cantidadPreguntas;
-      console.log("Promedio de calificaciones:", promedioCalificaciones);
-      evaluacion = promedioCalificaciones;
-      // Guardar el promedio en la variable "calificacionExamen"
-      examenesRef.doc(idExamen)
-        .update({ calificacionExamen: promedioCalificaciones })
-        .then(() => {
-          console.log(
-            "Calificación del examen actualizada correctamente."
-          );
-        })
-        .catch((error) => {
-          console.error(
-            "Error al actualizar la calificación del examen:",
-            error
-          );
-        });
-    } else {
-      console.log("No hay preguntas en el examen.");
+      // Acumular la suma de calificaciones
+      sumaCalificaciones += calificacionPregunta;
     }
-    
-  })
-  .catch((error) => {
-    console.error('Error al procesar evaluaciones:', error);
-  });
 
-        })
-        .catch((error) => {
-          console.error("Error al obtener las preguntas:", error);
-        });
-    } else evaluacion = req.body.evaluacion;
+    // Puedes hacer cualquier operación adicional con la suma de calificaciones aquí
+    console.log('Calificacion del Examen:', sumaCalificaciones);
 
-    // Actualizar el atributo "calificacionExamen"
-    await examenesRef.doc(idExamen).update({ calificacionExamen: evaluacion });
-
-    res.status(200).json({ mensaje: "Respuesta almacenada exitosamente", calificacionExamen: evaluacion });
+    // Responder con la suma de calificaciones
+    res.json({ sumaCalificaciones });
   } catch (error) {
-    console.error("Error al escribir en Firestore:", error);
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    console.error('Error en evaluarRespuestaExamen:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+// Ruta que hace dos solicitudes fetch POST a otra evaluar Examen
+const evaluarRespuestaExamen2 = async (req, res) => {
+  try {
+    const { idAsignatura, idExamen } = req.body;
+
+    // Hacer la primera solicitud fetch POST
+    const respuesta1 = await fetch(`http://localhost:${PORT}/evaluarRespuestaExamen`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ idAsignatura, idExamen }),
+    });
+
+    if (!respuesta1.ok) {
+      throw new Error('Error en la primera solicitud POST');
+    }
+
+    // Obtener datos de la primera respuesta (si es necesario)
+    const datosRespuesta1 = await respuesta1.json();
+
+    // Hacer la segunda solicitud fetch POST
+    const respuesta2 = await fetch(`http://localhost:${PORT}/evaluarRespuestaExamen`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ idAsignatura, idExamen }),
+    });
+
+    if (!respuesta2.ok) {
+      throw new Error('Error en la segunda solicitud POST');
+    }
+
+    // Obtener datos de la segunda respuesta (si es necesario)
+    const datosRespuesta2 = await respuesta2.json();
+
+    // Puedes hacer cualquier cosa con los datos de ambas respuestas
+    const resultadoFinal = {
+      respuesta2: datosRespuesta2,
+    };
+
+    res.json(resultadoFinal);
+  } catch (error) {
+    console.error('Error en la ruta /rutaEjemplo:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
@@ -282,7 +284,8 @@ const iniciarPrueba = async (req, res) => {
   });
 
     if (estado.includes("Creada")){
-        return res.json({message: "Esta prueba ya no esta disponible porque el usuario la inició anteriormente"})}
+        return res.json({message: "Esta prueba ya no esta disponible porque el usuario la inició anteriormente"})
+      }
           
 
     await CollectionRef.update({ estado: "En Curso" });
@@ -293,11 +296,12 @@ const iniciarPrueba = async (req, res) => {
       console.log(`Cuenta regresiva: ${contador} segundos`);
 
       contador--;
-      if (contador < 0){
+      if (contador < 1){
         //  terminar la prueba
 
           CollectionRef.update({ estado: "Terminado" });
-        //   const respu = await fetch(
+          
+                  //   const respu = await fetch(
         //     `http://127.0.0.1:${PORT}/evaluarRespuestaExamen`,
         //     {
         //       method: "POST",
@@ -340,5 +344,5 @@ const iniciarPrueba = async (req, res) => {
 };
 
 
-const controllersExam = {crearExamen , evaluarRespuestaExamen , iniciarPrueba};
+const controllersExam = {crearExamen , evaluarRespuestaExamen , evaluarRespuestaExamen2 , iniciarPrueba};
 export default controllersExam

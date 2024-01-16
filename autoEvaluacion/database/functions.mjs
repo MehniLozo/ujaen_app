@@ -89,19 +89,32 @@ export async function evaluarRespuestaPregunta(idAsignatura, idExamen, idPregunt
       body: JSON.stringify({ idAsignatura, idExamen, idPregunta, evaluacion })
     });
     const data = await respu.json();
-    console.log("Respuesta de la operacion: ", data);
+    // console.log("Respuesta de la operacion: ", data);
   } catch (error) {
     console.error("Error al intentar llamar a evaluar pregunta de prueba.");
   }
 }
 
 
+export async function intercambiarCases( cadena , toSnakeCase){
 
+    // Eliminar espacios en blanco al principio y al final
+    const cadenaSinEspacios = cadena.trim();
+    
+    let cadenaProcesada = "";
+    if(toSnakeCase){
+    // Sustituir espacios en blanco por "_"
+    cadenaProcesada = cadenaSinEspacios.replace(/\s+/g, '_');
+    }else{
+      cadenaProcesada = cadenaSinEspacios.replace(/_/g, ' ');
+    }
+     return cadenaProcesada;
+  }
 
 
 // const funtions = {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia};
 // export default funtions
 
-export default {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia, evaluarRespuestaPregunta}
+export default {desordenarArreglo , getAsignaturaRef , getExamenRef , obtenerHoraActualFormateada , eliminarSubcadena , obtenerBDaPartirReferencia, evaluarRespuestaPregunta , intercambiarCases}
 
 

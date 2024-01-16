@@ -12,7 +12,7 @@ router.post("/evaluarRespuestaPregunta", controllersPreg.evaluarRespuestaPregunt
 router.post("/crearExamen", controllersExam.crearExamen);//
 router.post("/evaluarRespuestaExamen", controllersExam.evaluarRespuestaExamen);
 router.post("/iniciarPrueba", controllersExam.iniciarPrueba);
-router.post("/agregarAsignatura", controllersAsig.agregarAsignatura);//
+router.post("/agregar Asignatura", controllersAsig.agregarAsignatura);//
 router.get("/obtenerAsignaturasUsuario", controllersAsig.obtenerAsignaturasUsuario);//
 router.get("/obtenerEvaluacionesAsignatura/:nombreAsignatura", controllersAsig.obtenerEvaluacionesAsignatura);//
 router.post("/register", controllersUsua.register);

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet, TextInput, ProgressBarAndroid , Modal , Button} from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, StyleSheet,Dimensions, TextInput, ProgressBarAndroid , Modal , Button} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import BurgerContent from './BurgerContent';
 import { useNavigation } from '@react-navigation/native';
@@ -42,7 +42,11 @@ const InitialScreen = () => {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const [quizData, setQuizData] = useState([]);
   const navigation = useNavigation();
+  const { width, height } = Dimensions.get('window');
 
+  // Calcula el tamaño del icono proporcionalmente al ancho de la pantalla
+  const iconSize = width * 0.1;
+  const iconSizeB = width * 0.05;
   const fetchData = async () => {
     try {
       let respu = await Promise.resolve(apisHandles.obtenerAsignaturasUsuario());
@@ -115,12 +119,12 @@ const InitialScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <TouchableOpacity style={styles.icon} onPress={toggleMenu}>
-          <Text>☰</Text> 
+        <TouchableOpacity  onPress={toggleMenu}>
+        <Icon name="bars" size={iconSizeB} color="#888" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.profileIcon} onPress={() => console.log('Profile icon clicked')}>
           <Text style={styles.greetingText}>Hola Aziz!</Text>
-          <Icon name="user" size={60} color="#888" />
+          <Icon name="user" size={iconSize} color="#888" />
         </TouchableOpacity>
       </View>
 
@@ -303,3 +307,4 @@ const styles = StyleSheet.create({
 });
 
 export default InitialScreen;
+

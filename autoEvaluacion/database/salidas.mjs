@@ -36,7 +36,7 @@ function salidaAlt(response) {
 
 async function salidaVF(response) {
     let [pregunta, respuesta, justificacion] = await limpiarVF2(response);
-    // pregunta = `${pregunta}`;
+    // pregunta = `<p>${pregunta} </p>`;
     // let id = ["10", "20"];
     let enviarAPI = 1;
     // let opciones = [["Verdadera", "V"], ["Falsa", "F"]];
